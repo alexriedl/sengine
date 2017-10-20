@@ -1,0 +1,19 @@
+{
+  "name": "sengine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexriedl/sengine"
+  },
+  "scripts": {},
+  "devDependencies": {
+    "@types/webgl-ext": "0.0.29",
+    "tslint": "5.7.0",
+    "typescript": "2.5.3"
+  },
+  "dependencies": {}
+}

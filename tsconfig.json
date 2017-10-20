@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es6",
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "skipDefaultLibCheck": true,
+    "allowJs": false,
+    "outDir": "tsout",
+    "baseUrl": "./src"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
