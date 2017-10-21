@@ -1,6 +1,5 @@
-import { Color } from '../Utils';
+import { Color, Register } from '../Utils';
 import { Entity } from '../Entity';
-import { vec2 } from '../Math';
 import Renderer from './Renderer';
 
 export default abstract class Game {
@@ -14,12 +13,14 @@ export default abstract class Game {
 	private running: boolean = false;
 	private initialized: boolean = false;
 
-	public constructor(canvasId: string, rendererDimensions: vec2, scene: Entity = new Entity()) {
-		this.renderer = new Renderer(canvasId, rendererDimensions.x, rendererDimensions.y);
+	public constructor(canvasId: string, scene: Entity = new Entity()) {
+		this.renderer = new Renderer(canvasId);
 		this.scene = scene;
 	}
 
-	protected abstract initialize(gl: WebGLRenderingContext): void;
+	protected initialize(gl: WebGLRenderingContext): void {
+		Register.initializeGLItems(gl);
+	}
 
 	/**
 	 * Set the scene for the game. The default update/render functions redirect logic to this scene.
@@ -36,8 +37,9 @@ export default abstract class Game {
 		if (this.scene) this.scene.update(deltaTime);
 	}
 
-	protected render(renderer: Renderer): void {
-		renderer.render(this.scene, this.backgroundColor);
+	protected render(): void {
+		if (this.scene) this.renderer.render(this.scene, this.backgroundColor);
+		else this.renderer.clearScreen(this.backgroundColor);
 	}
 
 	public start(): void {
@@ -72,8 +74,7 @@ export default abstract class Game {
 		}
 
 		this.update(deltaTime);
-		// TODO: Update renderer to be more generic and the full renderer does not need to be passed to the render function
-		this.render(this.renderer);
+		this.render();
 
 		requestAnimationFrame(this.frame);
 	}

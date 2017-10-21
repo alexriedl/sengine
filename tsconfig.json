@@ -6,10 +6,12 @@
     "noUnusedLocals": true,
     "skipDefaultLibCheck": true,
     "allowJs": false,
-    "outDir": "tsout",
+    "declaration": true,
+    "outDir": "dist",
     "baseUrl": "./src"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "tsout"
   ]
 }

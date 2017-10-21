@@ -1,13 +1,12 @@
 import { Color, Register } from '../Utils';
 import { Entity } from '../Entity';
-import { mat4 } from '../Math';
+import { mat4, vec2 } from '../Math';
 
 export default class Renderer {
 	public gl: WebGLRenderingContext;
-	private xSize: number;
-	private ySize: number;
+	private pixelDimensions: vec2 = new vec2(100, 100);
 
-	public constructor(canvasId: string, xSize: number, ySize: number) {
+	public constructor(canvasId: string) {
 		const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
 		const gl = (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')) as WebGLRenderingContext;
 		if (!gl) {
@@ -22,17 +21,20 @@ export default class Renderer {
 
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-		this.xSize = xSize;
-		this.ySize = ySize;
 	}
 
-	protected static clearScreen(gl: WebGLRenderingContext): void {
+	public setSize(pixelDimensions: vec2): void {
+		this.pixelDimensions = pixelDimensions;
+	}
+
+	public clearScreen(background: Color): void {
+		const gl: WebGLRenderingContext = this.gl;
+		gl.clearColor(background.r, background.g, background.b, 1.0);
 		// tslint:disable-next-line:no-bitwise
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
-	public render(scene: Entity, background: Color = Color.BLACK.lighten(0.3)): void {
+	public render(scene: Entity, background: Color): void {
 		const gl: WebGLRenderingContext = this.gl;
 
 		Register.initializeGLItems(gl);
@@ -41,9 +43,8 @@ export default class Renderer {
 		const height = gl.canvas.clientHeight;
 
 		gl.viewport(0, 0, width, height);
-		gl.clearColor(background.r, background.g, background.b, 1.0);
-		Renderer.clearScreen(gl);
-		const orthoMatrix = mat4.ortho(0, this.xSize, this.ySize, 0, -1, 1);
+		this.clearScreen(background);
+		const orthoMatrix = mat4.ortho(0, this.pixelDimensions.x, this.pixelDimensions.y, 0, -1, 1);
 
 		scene.render(gl, orthoMatrix);
 	}

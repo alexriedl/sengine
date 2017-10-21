@@ -17,7 +17,7 @@ export function unregisterAll<T>(type: { new(): T }, action?: (item: T) => void)
 	}
 }
 
-class GLRegister {
+export class GLRegister {
 	public initialize(gl: WebGLRenderingContext): void {
 		return;
 	}
