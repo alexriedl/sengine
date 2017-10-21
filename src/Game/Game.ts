@@ -1,5 +1,6 @@
 import { Color, Register } from '../Utils';
 import { Entity } from '../Entity';
+import { vec2 } from '../Math';
 import Renderer from './Renderer';
 
 export default abstract class Game {
@@ -26,10 +27,11 @@ export default abstract class Game {
 	 * Set the scene for the game. The default update/render functions redirect logic to this scene.
 	 * The old scene will be returned
 	 */
-	public setScene(scene: Entity, backgroundColor: Color = Color.BLACK): Entity {
+	public setScene(scene: Entity, PixelDimensions: vec2, backgroundColor: Color = Color.BLACK): Entity {
 		const old = this.scene;
 		this.scene = scene;
 		this.backgroundColor = backgroundColor;
+		this.renderer.setSize(PixelDimensions);
 		return old;
 	}
 
