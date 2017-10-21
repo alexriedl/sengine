@@ -33,10 +33,11 @@ export default class Game {
      * Set the scene for the game. The default update/render functions redirect logic to this scene.
      * The old scene will be returned
      */
-    setScene(scene, backgroundColor = Color.BLACK) {
+    setScene(scene, PixelDimensions, backgroundColor = Color.BLACK) {
         const old = this.scene;
         this.scene = scene;
         this.backgroundColor = backgroundColor;
+        this.renderer.setSize(PixelDimensions);
         return old;
     }
     update(deltaTime) {
