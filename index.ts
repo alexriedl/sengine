@@ -1,13 +1,5 @@
-import * as Entity from './src/Entity';
-import * as Game from './src/Game';
-import * as Math from './src/Math';
-import * as Model from './src/Model';
-import * as Utils from './src/Utils';
-
-export {
-	Entity,
-	Game,
-	Math,
-	Model,
-	Utils,
-};
+export { Color, Random, Register } from './src/Utils';
+export { Entity } from './src/Entity';
+export { Game } from './src/Game';
+export { mat4, scalar, vec2, vec3, vec4 } from './src/Math';
+export { Model } from './src/Model';
