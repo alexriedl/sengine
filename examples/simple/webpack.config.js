@@ -42,7 +42,10 @@ module.exports = [{
 	context: SRC_DIR,
 	entry: { game: './game.ts' },
 	resolve: {
-		extensions: ['.js', '.ts']
+		extensions: ['.js', '.ts'],
+		alias: {
+			sengine: path.resolve(__dirname, '../../src')
+		}
 	},
 	output: {
 		path: OUT_DIR,

@@ -1,4 +1,4 @@
-import { Game, Entity, SimpleRectangle, Color, vec2, vec3 } from '../../../src';
+import { Color, Entity, Game, SimpleRectangle, vec2, vec3 } from 'sengine';
 
 export default class SimpleGame extends Game {
 	private square: Entity;
