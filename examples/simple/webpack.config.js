@@ -32,6 +32,10 @@ module.exports = [{
 	},
 	module: {
 		loaders: loaders
+	},
+	node: {
+		__dirname: false,
+		__filename: false
 	}
 },
 {

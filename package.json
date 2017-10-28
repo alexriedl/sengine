@@ -10,7 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/alexriedl/sengine"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "rm -rf dist && webpack"
+  },
   "devDependencies": {
     "@types/webgl-ext": "0.0.29",
     "babel-core": "6.26.0",
