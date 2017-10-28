@@ -1,8 +1,7 @@
 import { Color, Register } from '../Utils';
-import { Entity } from '../Entity';
 import Renderer from './Renderer';
 export default class Game {
-    constructor(canvasId, scene = new Entity()) {
+    constructor(canvasId) {
         this.running = false;
         this.initialized = false;
         this.frame = (now) => {
@@ -24,7 +23,6 @@ export default class Game {
             requestAnimationFrame(this.frame);
         };
         this.renderer = new Renderer(canvasId);
-        this.scene = scene;
     }
     initialize(gl) {
         Register.initializeGLItems(gl);

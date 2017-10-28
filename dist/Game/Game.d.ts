@@ -9,7 +9,7 @@ export default abstract class Game {
     private then;
     private running;
     private initialized;
-    constructor(canvasId: string, scene?: Entity);
+    constructor(canvasId: string);
     protected initialize(gl: WebGLRenderingContext): void;
     /**
      * Set the scene for the game. The default update/render functions redirect logic to this scene.

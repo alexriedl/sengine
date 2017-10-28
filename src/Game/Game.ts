@@ -14,9 +14,8 @@ export default abstract class Game {
 	private running: boolean = false;
 	private initialized: boolean = false;
 
-	public constructor(canvasId: string, scene: Entity = new Entity()) {
+	public constructor(canvasId: string) {
 		this.renderer = new Renderer(canvasId);
-		this.scene = scene;
 	}
 
 	protected initialize(gl: WebGLRenderingContext): void {
