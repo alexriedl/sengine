@@ -1,3 +1,4 @@
+import { vec2 } from '../Math';
 import { Register } from '../Utils';
 
 export class Buffer {
@@ -86,6 +87,33 @@ export namespace Buffer {
 			offset: 0,
 			count: undefined,
 		};
+	}
+
+	export function createGridUV(spriteDim: vec2, textureDim: vec2, totalSprites?: number,
+		paddingDim: vec2 = new vec2(), options?: IBufferOptions): Buffer {
+		if (!totalSprites) totalSprites = 3; // TODO: Actually calculate this
+
+		const buffer = [];
+		let count = 0;
+		for (let y = paddingDim.y; y < textureDim.y && count < totalSprites; y += spriteDim.y) {
+			for (let x = paddingDim.x; x < textureDim.x && count < totalSprites; x += spriteDim.x) {
+				count++;
+
+				const left = x / textureDim.x;
+				const right = (x + spriteDim.x) / textureDim.x;
+				const top = y / textureDim.y;
+				const bottom = (y + spriteDim.y) / textureDim.y;
+
+				buffer.push(
+					left, top,
+					right, top,
+					right, bottom,
+					left, bottom,
+				);
+			}
+		}
+
+		return new Buffer(buffer, options);
 	}
 
 	export function createRectangleUV(minX: number = 0, minY: number = 0, maxX: number = 1, maxY: number = 1,
