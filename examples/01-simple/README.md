@@ -1,5 +1,8 @@
 # Simple Example
 
+First look at sengine!
+
+
 This is a small example of how to use the sengine. To run this locally, run the npm commands:
 `npm install`
 `npm run build`
