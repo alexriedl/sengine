@@ -6,13 +6,12 @@ export default class Scene extends Entity {
 	private static LAST_RENDER_TARGET: WebGLFramebuffer;
 	public renderTarget: WebGLFramebuffer;
 	public backgroundColor: Color;
-	public dimensions: vec2;
 	private vpMatrix: mat4;
 
-	public constructor(pixelDimensions: vec2, backgroundColor: Color = Color.BLACK) {
+	public constructor(dimensions: vec2, backgroundColor: Color = Color.BLACK) {
 		super();
 		this
-			.setOrtho(pixelDimensions)
+			.setOrtho(dimensions)
 			.setBackgroundColor(backgroundColor);
 	}
 
@@ -24,16 +23,19 @@ export default class Scene extends Entity {
 	}
 
 	protected viewport(gl: WebGLRenderingContext): this {
-		const width = this.dimensions.x;
-		const height = this.dimensions.y;
+		let width;
+		let height;
+		if (!this.renderTarget) {
+			width = gl.drawingBufferWidth;
+			height = gl.drawingBufferHeight;
+		}
+
 		gl.viewport(0, 0, width, height);
 		return this;
 	}
 
-	public setOrtho(pixelDimensions: vec2): this {
-		// TODO: This is not configurable enough (breaks droneup)
-		this.vpMatrix = mat4.ortho(0, pixelDimensions.x, pixelDimensions.y, 0, -1, 1);
-		this.dimensions = pixelDimensions;
+	public setOrtho(dimensions: vec2): this {
+		this.vpMatrix = mat4.ortho(0, dimensions.x, dimensions.y, 0, -1, 1);
 		return this;
 	}
 
