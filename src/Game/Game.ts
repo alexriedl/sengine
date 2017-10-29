@@ -1,36 +1,38 @@
-import { Color, Register } from '../Utils';
-import { Entity } from '../Entity';
-import { vec2 } from '../Math';
-import Renderer from './Renderer';
+import { Scene } from '../Entity';
+import { Canvas } from '../OpenGL';
+import { Register } from '../Utils';
 
 export default abstract class Game {
-	protected readonly renderer: Renderer;
-
-	// TODO: Perhaps extend entity to make a real scene? Allow a color to be set
-	protected scene: Entity;
-	protected backgroundColor: Color;
+	protected scene: Scene;
+	private gl: WebGLRenderingContext;
 
 	private then: number;
 	private running: boolean = false;
-	private initialized: boolean = false;
 
-	public constructor(canvasId: string) {
-		this.renderer = new Renderer(canvasId);
-	}
+	public constructor(glContext: WebGLRenderingContext | string) {
+		if (glContext instanceof WebGLRenderingContext) {
+			this.gl = glContext;
+		}
+		else {
+			this.gl = Canvas.createFromElementId(glContext);
+		}
 
-	protected initialize(gl: WebGLRenderingContext): void {
-		Register.initializeGLItems(gl);
+		// TODO: Move / Make this more configurable
+		const gl = this.gl;
+		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
+
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 	}
 
 	/**
 	 * Set the scene for the game. The default update/render functions redirect logic to this scene.
 	 * The old scene will be returned
 	 */
-	public setScene(scene: Entity, PixelDimensions: vec2, backgroundColor: Color = Color.BLACK): Entity {
+	public setScene(scene: Scene): Scene {
 		const old = this.scene;
 		this.scene = scene;
-		this.backgroundColor = backgroundColor;
-		this.renderer.setSize(PixelDimensions);
 		return old;
 	}
 
@@ -39,15 +41,10 @@ export default abstract class Game {
 	}
 
 	protected render(): void {
-		if (this.scene) this.renderer.render(this.scene, this.backgroundColor);
-		else this.renderer.clearScreen(this.backgroundColor);
+		if (this.scene) this.scene.render(this.gl);
 	}
 
 	public start(): void {
-		if (!this.initialized) {
-			this.initialize(this.renderer.gl);
-			this.initialized = true;
-		}
 		if (this.running) return;
 		this.running = true;
 		requestAnimationFrame(this.frame);
@@ -74,6 +71,7 @@ export default abstract class Game {
 			}
 		}
 
+		Register.initializeGLItems(this.gl);
 		this.update(deltaTime);
 		this.render();
 

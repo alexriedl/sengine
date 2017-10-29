@@ -1,6 +1,6 @@
 {
   "name": "sengine",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -21,6 +21,7 @@
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-plugin-transform-runtime": "6.23.0",
     "ts-loader": "3.1.0",
+    "ts-md5": "1.2.2",
     "tslint": "5.7.0",
     "typescript": "2.5.3",
     "webpack": "3.8.1"

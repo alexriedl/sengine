@@ -1,30 +1,28 @@
-import { Model } from '../Model';
-import { vec3, mat4 } from '../Math';
+import { mat4, vec3 } from '../Math';
+import { Shader } from '../OpenGL';
 
 export default class Entity {
-	protected model: Model;
-
 	protected parent?: Entity;
 	protected readonly children?: Entity[] = [];
 
 	public position: vec3;
 	public scale: vec3;
+	protected shader: Shader.Shader;
 
-	public constructor(model?: Model, position: vec3 = new vec3(), scale: vec3 = new vec3(1, 1, 1)) {
-		this.model = model;
+	public constructor(position: vec3 = new vec3(), scale: vec3 = new vec3(1, 1, 1)) {
 		this.position = position;
 		this.scale = scale;
 	}
 
-	public getRenderingPosition(): vec3 {
-		return this.position;
+	public getRenderingPosition(): vec3 { return this.position; }
+	public getRenderingScale(): vec3 { return this.scale; }
+
+	public setShader(shader: Shader.Shader): this {
+		this.shader = shader;
+		return this;
 	}
 
-	public getRenderingScale(): vec3 {
-		return this.scale;
-	}
-
-	public setParent(parent: Entity): void {
+	public setParent(parent: Entity): this {
 		if (this.parent) {
 			const index = this.parent.children.indexOf(this);
 			if (index >= 0) {
@@ -37,18 +35,18 @@ export default class Entity {
 		}
 
 		this.parent = parent;
+		return this;
 	}
 
-	public render(gl: WebGLRenderingContext, vpMatrix: mat4, overridePosition?: vec3, overrideScale?: vec3): void {
-		const scale = overrideScale || this.getRenderingScale();
-		const position = overridePosition || this.getRenderingPosition();
+	public render(gl: WebGLRenderingContext, vpMatrix: mat4): void {
+		const scale = this.getRenderingScale();
+		const position = this.getRenderingPosition();
 
 		const modelMatrix = mat4.fromTranslation(position).scale(scale);
 		const mvpMatrix = modelMatrix.mul(vpMatrix);
 
-		if (this.model) {
-			this.model.useShader(gl);
-			this.model.render(gl, mvpMatrix);
+		if (this.shader) {
+			this.shader.draw(gl, mvpMatrix);
 		}
 
 		this.children.forEach((c) => {
@@ -56,13 +54,9 @@ export default class Entity {
 		});
 	}
 
-	public update(deltaTime: number): boolean {
-		let childrenAnimating = false;
-		for (const child of this.children) {
-			const childAnimating = child.update(deltaTime);
-			if (childAnimating) childrenAnimating = true;
-		}
-
-		return childrenAnimating;
+	public update(deltaTime: number): void {
+		this.children.forEach((child) => {
+			child.update(deltaTime);
+		});
 	}
 }

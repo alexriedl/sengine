@@ -10,7 +10,7 @@ export default class Random {
 	 */
 	public constructor(seed?: number) {
 		this.seed = seed ? seed : Math.floor(Math.random() * (this.MAX - 1));
-		if (this.seed <= 0) this.seed *= -1;
+		if (this.seed < 0) this.seed *= -1;
 	}
 
 	public next(): number {
