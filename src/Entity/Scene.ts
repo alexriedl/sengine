@@ -46,6 +46,8 @@ export default class Scene extends Entity {
 		// TODO: Validate this test (null or undefined [unbind frame buffer takes only null?])
 		if (this.renderTarget !== Scene.LAST_RENDER_TARGET) {
 			gl.bindFramebuffer(gl.FRAMEBUFFER, this.renderTarget);
+			Scene.LAST_RENDER_TARGET = this.renderTarget;
+			console.log('rebound render target');
 		}
 
 		this.viewport(gl);

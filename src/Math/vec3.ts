@@ -1,4 +1,4 @@
-import scalar from './scalar';
+import { mod } from './scalar';
 
 // tslint:disable-next-line:class-name
 export default class vec3 {
@@ -82,7 +82,7 @@ export default class vec3 {
 	 */
 	public cmod(v: number | vec3): vec3 {
 		if (!(v instanceof vec3)) v = new vec3(v, v, v);
-		return new vec3(scalar.mod(this.x, v.x), scalar.mod(this.y, v.y), scalar.mod(this.z, v.z));
+		return new vec3(mod(this.x, v.x), mod(this.y, v.y), mod(this.z, v.z));
 	}
 
 	/**

@@ -98,6 +98,10 @@ export namespace Buffer {
 		], options);
 	}
 
+	export function createSquare(size: number = 1, options?: IBufferOptions): Buffer {
+		return createRectangle(size, size, options);
+	}
+
 	export function createRectangle(width: number = 1, height: number = 1, options?: IBufferOptions): Buffer {
 		const halfWidth = width / 2;
 		const halfHeight = height / 2;

@@ -31,7 +31,7 @@ export default class SimpleShader extends Shader {
 	protected buffer: Buffer;
 	protected color: Color;
 
-	public constructor(buffer: Buffer, color: Color) {
+	public constructor(buffer: Buffer, color: Color = Color.WHITE) {
 		super(vertexShaderSource, fragmentShaderSource);
 		this.buffer = buffer;
 		this.color = color;
@@ -58,7 +58,6 @@ export default class SimpleShader extends Shader {
 	public draw(gl: WebGLRenderingContext, mvpMatrix: mat4): void {
 		if (!this.bind(gl)) return;
 		if (!this.buffer.bindVertex(gl, this.metadata.attributes.a_position)) return;
-		console.log(this.metadata);
 		gl.uniformMatrix4fv(this.metadata.uniforms.u_mvp_matrix, false, mvpMatrix.toFloat32Array());
 		gl.uniform4fv(this.metadata.uniforms.u_color, this.color.toFloat32Array());
 		gl.drawArrays(gl.TRIANGLE_FAN, 0, this.buffer.options.count);

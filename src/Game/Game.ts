@@ -17,7 +17,7 @@ export default abstract class Game {
 			this.gl = Canvas.createFromElementId(glContext);
 		}
 
-		// TODO: Move / Make this more configurable
+		// TODO: Make more configurable (webgl setup/feature enables)
 		const gl = this.gl;
 		gl.enable(gl.DEPTH_TEST);
 		gl.depthFunc(gl.LEQUAL);
