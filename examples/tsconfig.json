@@ -7,8 +7,8 @@
     "outDir": "build",
     "baseUrl": "src",
     "paths": {
-      "sengine": [ "../../../src/index.ts" ],
-      "sengine/*": [ "../../../src/*" ]
+      "sengine": [ "../../src/index.ts" ],
+      "sengine/*": [ "../../src/*" ]
     }
   },
   "exclude": [
