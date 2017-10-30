@@ -1,4 +1,4 @@
-import './pacman.png';
+import '../../rsc/pacman.png';
 import { Buffer, Entity, Shader, Texture, vec2, vec3 } from 'sengine';
 
 const TOTAL_FRAME_TIME = (100 / 6) * 3;
