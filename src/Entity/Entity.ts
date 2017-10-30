@@ -14,9 +14,6 @@ export default class Entity {
 		this.scale = scale;
 	}
 
-	public getRenderingPosition(): vec3 { return this.position; }
-	public getRenderingScale(): vec3 { return this.scale; }
-
 	public setShader(shader: Shader.Shader): this {
 		this.shader = shader;
 		return this;
@@ -39,10 +36,7 @@ export default class Entity {
 	}
 
 	public render(gl: WebGLRenderingContext, vpMatrix: mat4): void {
-		const scale = this.getRenderingScale();
-		const position = this.getRenderingPosition();
-
-		const modelMatrix = mat4.fromTranslation(position).scale(scale);
+		const modelMatrix = mat4.fromTranslation(this.position).scale(this.scale);
 		const mvpMatrix = modelMatrix.mul(vpMatrix);
 
 		if (this.shader) {
