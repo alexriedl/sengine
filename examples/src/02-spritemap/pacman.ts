@@ -24,6 +24,7 @@ export default class Pacman extends Entity {
 		const verts = Buffer.createSquare(50);
 		const shader = new Shader.TextureShader(verts, this.texCoords, texture);
 		this.setShader(shader);
+		this.setDirection(Direction.LEFT);
 	}
 
 	public setDirection(direction: Direction) {
