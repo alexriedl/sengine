@@ -12,7 +12,7 @@ var exampleList = '';
 fs.readdirSync(SRC_DIR)
 	.filter(f => fs.statSync(path.join(SRC_DIR, f)).isDirectory())
 	.forEach(dir => {
-		exampleEntries[dir] = `./${dir}/index.ts`;
+		exampleEntries[dir] = path.join(SRC_DIR, dir, 'index.ts');
 		exampleList += `<li><a href='/${dir}.html'>${dir}</a></li>`;
 		let info = 'Basic information about this example.';
 		const infoPath = path.join(SRC_DIR, dir, 'info.html');
