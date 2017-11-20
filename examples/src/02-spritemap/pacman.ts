@@ -21,9 +21,8 @@ export default class Pacman extends Entity {
 	public constructor() {
 		super(new vec3(250, 250, 0));
 		this.texCoords = Buffer.createGridUV(new vec2(16, 16), new vec2(16 * 3, 16 * 3), 9);
-		const texture = new Texture('images/pacman.png');
 		const verts = Buffer.createSquare(50);
-		const shader = new Shader.TextureShader(verts, this.texCoords, texture);
+		const shader = new Shader.TextureShader(verts, this.texCoords, 'images/pacman.png');
 		this.setShader(shader);
 		this.setDirection(Direction.LEFT);
 	}

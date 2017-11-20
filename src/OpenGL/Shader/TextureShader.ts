@@ -40,11 +40,16 @@ export default class TextureShader extends Shader {
 	protected uvBuffer: Buffer;
 	protected texture: Texture;
 
-	public constructor(vertBuffer: Buffer, uvBuffer: Buffer, texture: Texture) {
+	public constructor(vertBuffer: Buffer, uvBuffer: Buffer, texture: Texture | string) {
 		super(vertexShaderSource, fragmentShaderSource);
 		this.vertBuffer = vertBuffer;
 		this.uvBuffer = uvBuffer;
-		this.texture = texture;
+		if (texture instanceof Texture) {
+			this.texture = texture;
+		}
+		else {
+			this.texture = new Texture(texture);
+		}
 	}
 
 	public setVertBuffer(vertBuffer: Buffer): this {
