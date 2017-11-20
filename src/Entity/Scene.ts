@@ -1,6 +1,6 @@
-import Entity from './Entity';
 import { mat4, vec2 } from '../Math';
 import { Color } from '../Utils';
+import Entity from './Entity';
 
 export default class Scene extends Entity {
 	private static LAST_RENDER_TARGET: WebGLFramebuffer;

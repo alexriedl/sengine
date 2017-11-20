@@ -1,5 +1,6 @@
-import { default as Pacman, Direction } from './pacman';
 import { Game, Scene, vec2 } from 'sengine';
+
+import Pacman, { Direction } from './pacman';
 
 export default class SpriteMapExample extends Game {
 	private pacman: Pacman;

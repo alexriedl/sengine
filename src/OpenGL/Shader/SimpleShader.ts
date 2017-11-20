@@ -1,7 +1,7 @@
-import Shader from './Shader';
 import { mat4 } from '../../Math';
 import { Color } from '../../Utils';
 import Buffer from '../Buffer';
+import Shader from './Shader';
 
 const vertexShaderSource = `
 attribute vec4 a_position;

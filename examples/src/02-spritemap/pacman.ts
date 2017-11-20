@@ -1,5 +1,6 @@
 import '../../rsc/pacman.png';
-import { Buffer, Entity, Shader, Texture, vec2, vec3 } from 'sengine';
+
+import { Buffer, Entity, Shader, vec2, vec3 } from 'sengine';
 
 const TOTAL_FRAME_TIME = (100 / 6) * 3;
 const LEFT: number[] = [0, 1, 2, 1];

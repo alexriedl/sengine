@@ -1,6 +1,7 @@
+import { Md5 } from 'ts-md5/dist/md5';
+
 import { mat4 } from '../../Math';
 import { Register, Types } from '../../Utils';
-import { Md5 } from 'ts-md5/dist/md5';
 
 export abstract class Shader {
 	private static metadata: Types.IStringMap<Shader.IShaderMetadata> = {};
