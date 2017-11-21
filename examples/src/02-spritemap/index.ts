@@ -5,7 +5,6 @@ import Pacman, { Direction } from './pacman';
 
 export default class SpriteMapExample extends Game {
 	private pacman: Pacman;
-	private camera: Camera2D;
 
 	protected left: boolean;
 	protected right: boolean;
@@ -15,12 +14,14 @@ export default class SpriteMapExample extends Game {
 	public constructor() {
 		super('game-canvas');
 
-		this.camera = new Camera2D(new vec2(10, 10));
-		this.setScene(new Scene(this.camera));
-		this.pacman = new Pacman(10, 10).setParent(this.scene);
+		const width = 10;
+		const height = 10;
+
+		this.setScene(new Scene(new Camera2D(new vec2(width, height))));
+		this.pacman = new Pacman(width, height).setParent(this.scene);
 	}
 
-	public onkeydown(event: KeyboardEvent): boolean {
+	public onkeydown = (event: KeyboardEvent): boolean => {
 		const stringCode = String.fromCharCode(event.keyCode);
 		switch (stringCode) {
 			case 'A': case '%': this.left = true; return false;
@@ -30,7 +31,7 @@ export default class SpriteMapExample extends Game {
 		}
 	}
 
-	public onkeyup(event: KeyboardEvent) {
+	public onkeyup = (event: KeyboardEvent) => {
 		const stringCode = String.fromCharCode(event.keyCode);
 		switch (stringCode) {
 			case 'A': case '%': this.left = false; return false;
@@ -53,6 +54,6 @@ export default class SpriteMapExample extends Game {
 }
 
 const game = new SpriteMapExample();
-document.onkeydown = (event: KeyboardEvent) => game.onkeydown(event);
-document.onkeyup = (event: KeyboardEvent) => game.onkeyup(event);
+document.onkeydown = game.onkeydown;
+document.onkeyup = game.onkeyup;
 game.start();
