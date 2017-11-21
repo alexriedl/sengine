@@ -1,6 +1,6 @@
 import { Buffer, Camera2D, Color, Entity, Game, Scene, Shader, vec2, vec3 } from 'sengine';
 
-export default class SimpleGame extends Game {
+export default class SimpleExample extends Game {
 	private camera: Camera2D;
 	private square: SimpleObject;
 	private time = Math.floor(Math.random() * 2500);
@@ -40,4 +40,4 @@ class SimpleObject extends Entity {
 	}
 }
 
-new SimpleGame().start();
+new SimpleExample().start();
