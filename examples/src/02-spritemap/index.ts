@@ -1,3 +1,4 @@
+// tslint:disable-next-line:no-implicit-dependencies
 import { Camera2D, Game, Scene, vec2 } from 'sengine';
 
 import Pacman, { Direction } from './pacman';
@@ -14,9 +15,9 @@ export default class SpriteMapExample extends Game {
 	public constructor() {
 		super('game-canvas');
 
-		this.camera = new Camera2D(new vec2(500, 500), new vec2(250, 250));
+		this.camera = new Camera2D(new vec2(10, 10));
 		this.setScene(new Scene(this.camera));
-		this.pacman = new Pacman().setParent(this.scene);
+		this.pacman = new Pacman(10, 10).setParent(this.scene);
 	}
 
 	public onkeydown(event: KeyboardEvent): boolean {
