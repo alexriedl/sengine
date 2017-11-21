@@ -3,5 +3,6 @@
 ## Overview
 
 ## Roadmap
-* Camera (2d and 3d)
-* Framebuffer support (Alternate render target)
+- [x] 2D Camera
+- [ ] 3D Camera
+- [ ] Framebuffer support (Alternate render target)
