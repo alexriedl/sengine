@@ -1,9 +1,10 @@
-import { Game, Scene, vec2 } from 'sengine';
+import { Camera2D, Game, Scene, vec2 } from 'sengine';
 
 import Pacman, { Direction } from './pacman';
 
 export default class SpriteMapExample extends Game {
 	private pacman: Pacman;
+	private camera: Camera2D;
 
 	protected left: boolean;
 	protected right: boolean;
@@ -12,7 +13,9 @@ export default class SpriteMapExample extends Game {
 
 	public constructor() {
 		super('game-canvas');
-		this.setScene(new Scene(new vec2(500, 500)));
+
+		this.camera = new Camera2D(new vec2(500, 500), new vec2(250, 250));
+		this.setScene(new Scene(this.camera));
 		this.pacman = new Pacman().setParent(this.scene);
 	}
 

@@ -1,12 +1,14 @@
-import { Buffer, Color, Entity, Game, Scene, Shader, vec2, vec3 } from 'sengine';
+import { Buffer, Camera2D, Color, Entity, Game, Scene, Shader, vec2, vec3 } from 'sengine';
 
 export default class SimpleGame extends Game {
+	private camera: Camera2D;
 	private square: SimpleObject;
 	private time = Math.floor(Math.random() * 2500);
 
 	public constructor() {
 		super('game-canvas');
-		this.setScene(new Scene(new vec2(500, 500)));
+		this.camera = new Camera2D(new vec2(500, 500));
+		this.setScene(new Scene(this.camera));
 		this.square = new SimpleObject(30).setParent(this.scene);
 	}
 
@@ -17,9 +19,9 @@ export default class SimpleGame extends Game {
 		const c = Math.cos(this.time) - 0.5;
 		const b = new Color(s * s, c * c, 1 - (s * s));
 
-		this.scene.backgroundColor = b;
+		this.camera.setBackgroundColor(b);
 
-		this.square.position = new vec3(250 + s * 50, 250 + c * 50);
+		this.square.position = new vec3(s * 50, c * 50);
 		this.square.setColor(new Color(1 - b.r, 1 - b.g, 1 - b.b));
 	}
 }
