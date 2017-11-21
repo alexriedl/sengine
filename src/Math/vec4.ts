@@ -27,18 +27,10 @@ export default class vec4 {
 	public sqrLen = this.squaredLength;
 
 	public constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
-		if (Array.isArray(x)) {
-			this.x = x[0];
-			this.y = x[1];
-			this.z = x[2];
-			this.w = x[3];
-		}
-		else {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.w = w;
-		}
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
 	}
 
 	/**
