@@ -4,7 +4,7 @@ var webpack = require('webpack');
 var htmlWebpackPlugin = require('html-webpack-plugin');
 
 var SRC_DIR = path.join(__dirname, 'src');
-var OUT_DIR = path.join(__dirname, 'out');
+var OUT_DIR = path.join(__dirname, 'dist');
 
 const exampleEntries = {};
 const plugins = [];
