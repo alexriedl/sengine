@@ -16,9 +16,15 @@ export default class vec2 {
 	public sqrDist = this.squaredDistance;
 	public sqrLen = this.squaredLength;
 
-	public constructor(x: number = 0, y: number = 0) {
-		this.x = x;
-		this.y = y;
+	public constructor(x: number | number[] = 0, y: number = 0) {
+		if (Array.isArray(x)) {
+			this.x = x[0];
+			this.y = x[1];
+		}
+		else {
+			this.x = x;
+			this.y = y;
+		}
 	}
 
 	public toVec3(z: number = 0) {
