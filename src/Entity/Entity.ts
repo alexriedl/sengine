@@ -1,15 +1,15 @@
 import { mat4, vec3 } from '../Math';
 import { Shader } from '../OpenGL';
+import BaseEntity from './BaseEntity';
 
-export default class Entity {
+export default class Entity extends BaseEntity {
 	protected parent?: Entity;
-	protected readonly children?: Entity[] = [];
-
+	protected shader: Shader.Shader;
 	public position: vec3;
 	public scale: vec3;
-	protected shader: Shader.Shader;
 
 	public constructor(position: vec3 = new vec3(), scale: vec3 = new vec3(1, 1, 1)) {
+		super();
 		this.position = position;
 		this.scale = scale;
 	}
@@ -35,7 +35,7 @@ export default class Entity {
 		return this;
 	}
 
-	public render(gl: WebGLRenderingContext, vpMatrix: mat4): void {
+	public render(gl: WebGLRenderingContext, vpMatrix: mat4): this {
 		const modelMatrix = mat4.fromTranslation(this.position).scale(this.scale);
 		const mvpMatrix = modelMatrix.mul(vpMatrix);
 
@@ -43,14 +43,6 @@ export default class Entity {
 			this.shader.draw(gl, mvpMatrix);
 		}
 
-		this.children.forEach((c) => {
-			c.render(gl, mvpMatrix);
-		});
-	}
-
-	public update(deltaTime: number): void {
-		this.children.forEach((child) => {
-			child.update(deltaTime);
-		});
+		return super.render(gl, mvpMatrix);
 	}
 }

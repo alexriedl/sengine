@@ -1,8 +1,8 @@
 import { mat4, vec2 } from '../Math';
 import { Color } from '../Utils';
-import Entity from './Entity';
+import BaseEntity from './BaseEntity';
 
-export default class Scene extends Entity {
+export default class Scene extends BaseEntity {
 	private static LAST_RENDER_TARGET: WebGLFramebuffer;
 	public renderTarget: WebGLFramebuffer;
 	public backgroundColor: Color;
@@ -44,7 +44,7 @@ export default class Scene extends Entity {
 		return this;
 	}
 
-	public render(gl: WebGLRenderingContext): void {
+	public render(gl: WebGLRenderingContext): this {
 		// TODO: Validate this test (null or undefined [unbind frame buffer takes only null?])
 		if (this.renderTarget !== Scene.LAST_RENDER_TARGET) {
 			gl.bindFramebuffer(gl.FRAMEBUFFER, this.renderTarget);
@@ -54,6 +54,6 @@ export default class Scene extends Entity {
 
 		this.viewport(gl);
 		this.clearScreen(gl);
-		super.render(gl, this.vpMatrix);
+		return super.render(gl, this.vpMatrix);
 	}
 }
