@@ -27,16 +27,18 @@ export default class Pacman extends Entity {
 		this.setDirection(Direction.LEFT);
 	}
 
-	public setDirection(direction: Direction) {
+	public setDirection(direction: Direction): this {
 		switch (direction) {
 			case Direction.LEFT: this.direction = LEFT; this.movementDirection = new vec3(-1, 0); break;
 			case Direction.RIGHT: this.direction = RIGHT; this.movementDirection = new vec3(+1, 0); break;
 			case Direction.UP: this.direction = UP; this.movementDirection = new vec3(0, -1); break;
 			case Direction.DOWN: this.direction = DOWN; this.movementDirection = new vec3(0, +1); break;
 		}
+
+		return this;
 	}
 
-	public update(deltaTime: number): void {
+	public update(deltaTime: number): this {
 		this.frameTime -= deltaTime;
 		if (this.frameTime <= 0) {
 			this.frameTime += TOTAL_FRAME_TIME;
@@ -54,5 +56,7 @@ export default class Pacman extends Entity {
 		if (y > 500) y = 0;
 		else if (y < 0) y = 500;
 		this.position = new vec3(x, y);
+
+		return this;
 	}
 }

@@ -3,7 +3,7 @@ import { Shader } from '../OpenGL';
 import BaseEntity from './BaseEntity';
 
 export default class Entity extends BaseEntity {
-	protected parent?: Entity;
+	protected parent?: BaseEntity;
 	protected shader: Shader.Shader;
 	public position: vec3;
 	public scale: vec3;
@@ -19,7 +19,7 @@ export default class Entity extends BaseEntity {
 		return this;
 	}
 
-	public setParent(parent: Entity): this {
+	public setParent(parent: BaseEntity): this {
 		if (this.parent) {
 			const index = this.parent.children.indexOf(this);
 			if (index >= 0) {

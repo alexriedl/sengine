@@ -1,7 +1,7 @@
 import { mat4 } from '../Math';
 
 export default abstract class Entity {
-	protected readonly children?: Entity[] = [];
+	public readonly children?: Entity[] = [];
 
 	public render(gl: WebGLRenderingContext, mvpMatrix: mat4): this {
 		this.children.forEach((c) => {
