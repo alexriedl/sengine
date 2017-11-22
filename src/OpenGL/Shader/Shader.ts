@@ -39,9 +39,19 @@ export abstract class Shader {
 				this.metadata.attributes[key] = gl.getAttribLocation(this.metadata.program, key);
 			});
 		}
+
+		// TODO: Come up with a more robust way to recursively pull values out of shader attributes/uniforms
 		if (typeof this.metadata.uniforms === 'object') {
 			Object.keys(this.metadata.uniforms).forEach((key) => {
-				this.metadata.uniforms[key] = gl.getUniformLocation(this.metadata.program, key);
+				if (typeof this.metadata.uniforms[key] === 'object') {
+					if (!this.metadata.uniforms[key]) this.metadata.uniforms[key] = {};
+					Object.keys(this.metadata.uniforms[key]).forEach((k) => {
+						this.metadata.uniforms[key][k] = gl.getUniformLocation(this.metadata.program, `${key}.${k}`);
+					});
+				}
+				else {
+					this.metadata.uniforms[key] = gl.getUniformLocation(this.metadata.program, key);
+				}
 			});
 		}
 	}

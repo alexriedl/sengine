@@ -65,6 +65,7 @@ export class Buffer {
 }
 
 export namespace Buffer {
+	// TODO: Come up with a way to have verts and/or colors and/or uv and/or normals in the same buffer
 	export interface IBufferOptions {
 		target?: number; /* : WebGLBufferTarget = gl.ARRAY_BUFFER */
 		usage?: number; /* : WebGLBufferUsage = gl.STATIC_DRAW */

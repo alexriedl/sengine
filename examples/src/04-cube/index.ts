@@ -5,7 +5,11 @@ class Cube extends Entity {
 
 	public constructor() {
 		super();
-		this.setShader(new Shader.SimplerShader(Buffer.createCube(), Color.GREEN));
+		this.setShader(new Shader.AmbientLightShader(
+			Buffer.createCube(),
+			Color.GREEN,
+			{ ambientIntensity: 0.7, color: Color.WHITE },
+		));
 	}
 
 	public update(deltaTime: number): this {
