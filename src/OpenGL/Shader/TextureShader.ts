@@ -76,6 +76,6 @@ export default class TextureShader extends Shader {
 		if (!this.uvBuffer.bindVertex(gl, this.metadata.attributes.a_texcoord)) return;
 		if (!this.texture.bind(gl)) return;
 		gl.uniformMatrix4fv(this.metadata.uniforms.u_mvp_matrix, false, mvpMatrix.toFloat32Array());
-		gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vertBuffer.options.count);
+		gl.drawArrays(WebGLRenderingContext.TRIANGLE_FAN, 0, this.vertBuffer.options.count);
 	}
 }

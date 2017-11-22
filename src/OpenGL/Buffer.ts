@@ -18,7 +18,7 @@ export class Buffer {
 		const options = this.asyncInitializeSettings.options;
 
 		this.options = {
-			...Buffer.getDefaultOptions(gl),
+			...Buffer.DEFAULT_OPTIONS,
 			...(options || this.options),
 		};
 		this.options.count = this.options.count || Math.floor(values.length / this.options.size);
@@ -66,28 +66,27 @@ export class Buffer {
 
 export namespace Buffer {
 	export interface IBufferOptions {
-		target: number; /* : WebGLBufferTarget = gl.ARRAY_BUFFER */
-		usage: number; /* : WebGLBufferUsage = gl.STATIC_DRAW */
-		size: number; /* : number = 2 */
-		type: number; /* : GLType = gl.FLOAT */
-		normalized: boolean; /* : boolean = false */
-		stride: number; /* : number = 0 */
-		offset: number; /* : number = 0 */
-		count: number; /* : number = Math.floor(values.length / size) */
+		target?: number; /* : WebGLBufferTarget = gl.ARRAY_BUFFER */
+		usage?: number; /* : WebGLBufferUsage = gl.STATIC_DRAW */
+		size?: number; /* : number = 2 */
+		type?: number; /* : GLType = gl.FLOAT */
+		normalized?: boolean; /* : boolean = false */
+		stride?: number; /* : number = 0 */
+		offset?: number; /* : number = 0 */
+		count?: number; /* : number = Math.floor(values.length / size) */
+		renderMode?: number; /* : number = gl.TRIANGLE_FAN */
 	}
-
-	export function getDefaultOptions(gl: WebGLRenderingContext): IBufferOptions {
-		return {
-			target: gl.ARRAY_BUFFER,
-			usage: gl.STATIC_DRAW,
+	export const DEFAULT_OPTIONS = {
+		target: WebGLRenderingContext.ARRAY_BUFFER,
+		usage: WebGLRenderingContext.STATIC_DRAW,
 			size: 2,
-			type: gl.FLOAT,
+		type: WebGLRenderingContext.FLOAT,
 			normalized: false,
 			stride: 0,
 			offset: 0,
 			count: undefined,
+		renderMode: WebGLRenderingContext.TRIANGLE_FAN,
 		};
-	}
 
 	export function createGridUV(spriteDim: vec2, textureDim: vec2, totalSprites?: number,
 		paddingDim: vec2 = new vec2(), options?: IBufferOptions): Buffer {
@@ -118,12 +117,16 @@ export namespace Buffer {
 
 	export function createRectangleUV(minX: number = 0, minY: number = 0, maxX: number = 1, maxY: number = 1,
 		options?: IBufferOptions): Buffer {
+		const o: IBufferOptions = {
+			...options,
+			size: 2,
+		};
 		return new Buffer([
 			minX, minY,
 			maxX, minY,
 			maxX, maxY,
 			minX, maxY,
-		], options);
+		], o);
 	}
 
 	export function createSquare(size: number = 1, options?: IBufferOptions): Buffer {
@@ -133,6 +136,10 @@ export namespace Buffer {
 	export function createRectangle(width: number = 1, height: number = 1, options?: IBufferOptions): Buffer {
 		const halfWidth = width / 2;
 		const halfHeight = height / 2;
+		const o: IBufferOptions = {
+			...options,
+			size: 2,
+		};
 		return new Buffer([
 			-halfWidth, -halfHeight,
 			+halfWidth, -halfHeight,

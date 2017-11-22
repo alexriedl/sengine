@@ -1,6 +1,7 @@
 import { vec2 } from '../Math';
 import { Register } from '../Utils';
 
+// tslint:disable:max-line-length
 export class Texture {
 	private data: Uint8Array | string;
 	private w?: vec2 | number;
@@ -23,7 +24,7 @@ export class Texture {
 
 	public bind(gl: WebGLRenderingContext): boolean {
 		if (!this.texture) return false;
-		gl.bindTexture(gl.TEXTURE_2D, this.texture);
+		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.texture);
 		return true;
 	}
 }
@@ -32,8 +33,7 @@ export namespace Texture {
 	export function create(gl: WebGLRenderingContext, source: string): WebGLTexture;
 	export function create(gl: WebGLRenderingContext, data: Uint8Array, dimensions: vec2): WebGLTexture;
 	export function create(gl: WebGLRenderingContext, data: Uint8Array, width: number, height: number): WebGLTexture;
-	export function create(gl: WebGLRenderingContext, data: Uint8Array | string,
-		w?: vec2 | number, h?: number): WebGLTexture;
+	export function create(gl: WebGLRenderingContext, data: Uint8Array | string, w?: vec2 | number, h?: number): WebGLTexture;
 	export function create(
 		gl: WebGLRenderingContext,
 		data: Uint8Array | string,
@@ -52,24 +52,24 @@ export namespace Texture {
 		}
 
 		const texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
+		gl.pixelStorei(WebGLRenderingContext.UNPACK_ALIGNMENT, 1);
+		gl.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA, w, h, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE, data);
 
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MAG_FILTER, WebGLRenderingContext.NEAREST);
+		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_MIN_FILTER, WebGLRenderingContext.NEAREST);
+		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_S, WebGLRenderingContext.CLAMP_TO_EDGE);
+		gl.texParameteri(WebGLRenderingContext.TEXTURE_2D, WebGLRenderingContext.TEXTURE_WRAP_T, WebGLRenderingContext.CLAMP_TO_EDGE);
 
-		gl.bindTexture(gl.TEXTURE_2D, null);
+		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, null);
 
 		if (source) {
 			const image = new Image();
 			image.src = source;
 			image.onload = () => {
-				gl.bindTexture(gl.TEXTURE_2D, texture);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-				gl.bindTexture(gl.TEXTURE_2D, null);
+				gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, texture);
+				gl.texImage2D(WebGLRenderingContext.TEXTURE_2D, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE, image);
+				gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, null);
 			};
 		}
 

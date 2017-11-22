@@ -20,6 +20,7 @@ export default class Camera2D extends Camera {
 
 		const halfSize = size.scale(0.5);
 
+		// TODO: Implement a dirty check so this is not calculated every frame
 		return mat4.ortho(
 			position.x - halfSize.x,
 			position.x + halfSize.x,

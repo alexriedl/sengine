@@ -59,7 +59,7 @@ export abstract class Shader {
 		gl.shaderSource(shader, source);
 		gl.compileShader(shader);
 
-		const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+		const success = gl.getShaderParameter(shader, WebGLRenderingContext.COMPILE_STATUS);
 		if (success) return shader;
 
 		console.log(gl.getShaderInfoLog(shader));
@@ -67,8 +67,8 @@ export abstract class Shader {
 	}
 
 	public static buildProgram(gl: WebGLRenderingContext, vertex: string, fragment: string): WebGLProgram {
-		const vertexShader = Shader.compileSource(gl, gl.VERTEX_SHADER, vertex);
-		const fragmentShader = Shader.compileSource(gl, gl.FRAGMENT_SHADER, fragment);
+		const vertexShader = Shader.compileSource(gl, WebGLRenderingContext.VERTEX_SHADER, vertex);
+		const fragmentShader = Shader.compileSource(gl, WebGLRenderingContext.FRAGMENT_SHADER, fragment);
 
 		if (!vertexShader || !fragmentShader) {
 			console.error('Failed to compile a shader.');
@@ -82,7 +82,7 @@ export abstract class Shader {
 		gl.attachShader(program, fragmentShader);
 		gl.linkProgram(program);
 
-		const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+		const success = gl.getProgramParameter(program, WebGLRenderingContext.LINK_STATUS);
 		if (!success) {
 			console.log(gl.getProgramInfoLog(program));
 			console.error('Failed to create shader program.');

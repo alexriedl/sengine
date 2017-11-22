@@ -19,11 +19,14 @@ export default abstract class Game {
 
 		// TODO: Make more configurable (webgl setup/feature enables)
 		const gl = this.gl;
-		gl.enable(gl.DEPTH_TEST);
-		gl.depthFunc(gl.LEQUAL);
+		gl.enable(WebGLRenderingContext.DEPTH_TEST);
+		gl.depthFunc(WebGLRenderingContext.LEQUAL);
 
-		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		gl.enable(WebGLRenderingContext.BLEND);
+		gl.blendFunc(WebGLRenderingContext.SRC_ALPHA, WebGLRenderingContext.ONE_MINUS_SRC_ALPHA);
+
+		gl.enable(WebGLRenderingContext.CULL_FACE);
+		gl.cullFace(WebGLRenderingContext.FRONT);
 	}
 
 	/**

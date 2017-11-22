@@ -60,6 +60,6 @@ export default class SimpleShader extends Shader {
 		if (!this.buffer.bindVertex(gl, this.metadata.attributes.a_position)) return;
 		gl.uniformMatrix4fv(this.metadata.uniforms.u_mvp_matrix, false, mvpMatrix.toFloat32Array());
 		gl.uniform4fv(this.metadata.uniforms.u_color, this.color.toFloat32Array());
-		gl.drawArrays(gl.TRIANGLE_FAN, 0, this.buffer.options.count);
+		gl.drawArrays(this.buffer.options.renderMode, 0, this.buffer.options.count);
 	}
 }

@@ -6,6 +6,9 @@ export default abstract class Camera {
 	private backgroundColor: Color = Color.BLACK;
 	public renderTarget: WebGLFramebuffer;
 
+		// tslint:disable-next-line:no-bitwise
+	public readonly CLEAR_MASK = WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT;
+
 	public abstract getViewProjectionMatrix(gl: WebGLRenderingContext): mat4;
 
 	public setViewport(gl: WebGLRenderingContext): this {
@@ -25,21 +28,16 @@ export default abstract class Camera {
 		return this;
 	}
 
-	protected getClearMask(gl: WebGLRenderingContext): number {
-		// tslint:disable-next-line:no-bitwise
-		return gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT;
-	}
-
 	public clearScreen(gl: WebGLRenderingContext): this {
 		gl.clearColor(this.backgroundColor.r, this.backgroundColor.g, this.backgroundColor.b, 1.0);
-		gl.clear(this.getClearMask(gl));
+		gl.clear(this.CLEAR_MASK);
 		return this;
 	}
 
 	public setRenderTarget(gl: WebGLRenderingContext): this {
 		// TODO: Validate this test (null or undefined [unbind frame buffer takes only null?])
 		if (this.renderTarget !== Camera.LAST_RENDER_TARGET) {
-			gl.bindFramebuffer(gl.FRAMEBUFFER, this.renderTarget);
+			gl.bindFramebuffer(WebGLRenderingContext.FRAMEBUFFER, this.renderTarget);
 			Camera.LAST_RENDER_TARGET = this.renderTarget;
 			console.log('rebound render target');
 		}
