@@ -2,8 +2,8 @@ import { Scene } from '../Entity';
 import { Canvas } from '../OpenGL';
 import { Register } from '../Utils';
 
-export default abstract class Game {
-	protected scene: Scene;
+export default class Game {
+	public scene: Scene;
 	private gl: WebGLRenderingContext;
 
 	private then: number;

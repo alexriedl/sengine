@@ -20,7 +20,7 @@ export default class Camera3D extends Camera {
 	public up: vec3;
 
 	public view: IView = {
-		position: new vec3(0, 0, -10),
+		position: new vec3(0, 0, 10),
 		target: new vec3(0, 0, 0),
 		up: new vec3(0, 1, 0),
 	};
