@@ -5,6 +5,7 @@ import vec3 from './vec3';
  */
 // tslint:disable-next-line:class-name
 export default class mat4 {
+	public static readonly EPSILON = 0.000001;
 	private elements: number[];
 
 	public get m00(): number { return this.elements[0]; }
@@ -52,6 +53,28 @@ export default class mat4 {
 			this.m01, this.m11, this.m21, this.m31,
 			this.m02, this.m12, this.m22, this.m32,
 			this.m03, this.m13, this.m23, this.m33,
+		]);
+	}
+
+	public rotateY(radians: number) {
+		const s = Math.sin(radians);
+		const c = Math.cos(radians);
+
+		const m00 = this.m00 * c - this.m20 * s;
+		const m01 = this.m01 * c - this.m21 * s;
+		const m02 = this.m02 * c - this.m22 * s;
+		const m03 = this.m03 * c - this.m23 * s;
+
+		const m20 = this.m00 * s + this.m20 * c;
+		const m21 = this.m01 * s + this.m21 * c;
+		const m22 = this.m02 * s + this.m22 * c;
+		const m23 = this.m03 * s + this.m23 * c;
+
+		return new mat4([
+			m00, m01, m02, m03,
+			this.m10, this.m11, this.m12, this.m13,
+			m20, m21, m22, m23,
+			this.m30, this.m31, this.m32, this.m33,
 		]);
 	}
 
@@ -174,8 +197,12 @@ export default class mat4 {
 
 	/**
 	 * Generates a perspective projection matrix with the given bounds
+	 * @param fovy Vertical field of view in radians
+	 * @param aspect Aspect ration. Typically viewport width/height
+	 * @param near Near bound of the frustum
+	 * @param far Far bound of the frustum
 	 */
-	public static perspective(fovy, aspect, near, far) {
+	public static perspective(fovy: number, aspect: number, near: number, far: number) {
 		const f = 1.0 / Math.tan(fovy / 2);
 		const nf = 1 / (near - far);
 
@@ -199,6 +226,73 @@ export default class mat4 {
 			0, -2 * bt, 0, 0,
 			0, 0, 2 * nf, 0,
 			(left + right) * lr, (top + bottom) * bt, (far + near) * nf, 1,
+		]);
+	}
+
+	/**
+	 * Generateas a look-at matrix with the given position, focal point and up axis
+	 *
+	 * @param position Position of the viewer
+	 * @param target Point the viewer is looking at
+	 * @param up Vec3 pointing up (normalized vector)
+	 */
+	public static lookAt(position: vec3, target: vec3, up: vec3): mat4 {
+		let z0 = position.x - target.x;
+		let z1 = position.y - target.y;
+		let z2 = position.z - target.z;
+
+		if (Math.abs(z0) < mat4.EPSILON &&
+			Math.abs(z1) < mat4.EPSILON &&
+			Math.abs(z2) < mat4.EPSILON) {
+			return mat4.identity();
+		}
+
+		const zLength = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+		z0 *= zLength;
+		z1 *= zLength;
+		z2 *= zLength;
+
+		let x0 = up.y * z2 - up.z * z1;
+		let x1 = up.z * z0 - up.x * z2;
+		let x2 = up.x * z1 - up.y * z0;
+		let xLength = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+		if (!xLength) {
+			x0 = 0;
+			x1 = 0;
+			x2 = 0;
+		}
+		else {
+			xLength = 1 / xLength;
+			x0 *= xLength;
+			x1 *= xLength;
+			x2 *= xLength;
+		}
+
+		let y0 = z1 * x2 - z2 * x1;
+		let y1 = z2 * x0 - z0 * x2;
+		let y2 = z0 * x1 - z1 * x0;
+		let yLength = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+		if (!yLength) {
+			y0 = 0;
+			y1 = 0;
+			y2 = 0;
+		}
+		else {
+			yLength = 1 / yLength;
+			y0 *= yLength;
+			y1 *= yLength;
+			y2 *= yLength;
+		}
+
+		const w0 = -(x0 * position.x + x1 * position.y + x2 * position.z);
+		const w1 = -(y0 * position.x + y1 * position.y + y2 * position.z);
+		const w2 = -(z0 * position.x + z1 * position.y + z2 * position.z);
+
+		return new mat4([
+			x0, y0, z0, 0,
+			x1, y1, z1, 0,
+			x2, y2, z2, 0,
+			w0, w1, w2, 1,
 		]);
 	}
 }

@@ -79,14 +79,14 @@ export namespace Buffer {
 	export const DEFAULT_OPTIONS = {
 		target: WebGLRenderingContext.ARRAY_BUFFER,
 		usage: WebGLRenderingContext.STATIC_DRAW,
-			size: 2,
+		size: 2,
 		type: WebGLRenderingContext.FLOAT,
-			normalized: false,
-			stride: 0,
-			offset: 0,
-			count: undefined,
+		normalized: false,
+		stride: 0,
+		offset: 0,
+		count: undefined,
 		renderMode: WebGLRenderingContext.TRIANGLE_FAN,
-		};
+	};
 
 	export function createGridUV(spriteDim: vec2, textureDim: vec2, totalSprites?: number,
 		paddingDim: vec2 = new vec2(), options?: IBufferOptions): Buffer {
@@ -145,7 +145,84 @@ export namespace Buffer {
 			+halfWidth, -halfHeight,
 			+halfWidth, +halfHeight,
 			-halfWidth, +halfHeight,
-		], options);
+		], o);
+	}
+
+	export function createCube(width: number = 1, height: number = 1, depth: number = 1,
+		options?: IBufferOptions): Buffer {
+		const halfWidth = width / 2;
+		const halfHeight = height / 2;
+		const halfDepth = depth / 2;
+		const o: IBufferOptions = {
+			...options,
+			size: 3,
+			renderMode: WebGLRenderingContext.TRIANGLES,
+		};
+		const LEFT_BOTTOM_CLOSE = [-halfWidth, -halfHeight, -halfDepth];
+		const RIGHT_BOTTOM_CLOSE = [+halfWidth, -halfHeight, -halfDepth];
+		const RIGHT_TOP_CLOSE = [+halfWidth, +halfHeight, -halfDepth];
+		const LEFT_TOP_CLOSE = [-halfWidth, +halfHeight, -halfDepth];
+
+		const LEFT_BOTTOM_FAR = [-halfWidth, -halfHeight, +halfDepth];
+		const RIGHT_BOTTOM_FAR = [+halfWidth, -halfHeight, +halfDepth];
+		const RIGHT_TOP_FAR = [+halfWidth, +halfHeight, +halfDepth];
+		const LEFT_TOP_FAR = [-halfWidth, +halfHeight, +halfDepth];
+
+		return new Buffer([
+			// Front Face
+			...LEFT_BOTTOM_CLOSE,
+			...RIGHT_BOTTOM_CLOSE,
+			...RIGHT_TOP_CLOSE,
+
+			...RIGHT_TOP_CLOSE,
+			...LEFT_TOP_CLOSE,
+			...LEFT_BOTTOM_CLOSE,
+
+			// Back Face
+			...LEFT_BOTTOM_FAR,
+			...RIGHT_TOP_FAR,
+			...RIGHT_BOTTOM_FAR,
+
+			...RIGHT_TOP_FAR,
+			...LEFT_BOTTOM_FAR,
+			...LEFT_TOP_FAR,
+
+			// Left Face
+			...LEFT_BOTTOM_CLOSE,
+			...LEFT_TOP_CLOSE,
+			...LEFT_TOP_FAR,
+
+			...LEFT_TOP_FAR,
+			...LEFT_BOTTOM_FAR,
+			...LEFT_BOTTOM_CLOSE,
+
+			// Right Face
+			...RIGHT_BOTTOM_CLOSE,
+			...RIGHT_TOP_FAR,
+			...RIGHT_TOP_CLOSE,
+
+			...RIGHT_TOP_FAR,
+			...RIGHT_BOTTOM_CLOSE,
+			...RIGHT_BOTTOM_FAR,
+
+			// Top Face
+			...RIGHT_TOP_CLOSE,
+			...RIGHT_TOP_FAR,
+			...LEFT_TOP_FAR,
+
+			...LEFT_TOP_FAR,
+			...LEFT_TOP_CLOSE,
+			...RIGHT_TOP_CLOSE,
+
+			// Bottom Face
+			...RIGHT_BOTTOM_CLOSE,
+			...RIGHT_BOTTOM_FAR,
+			...LEFT_BOTTOM_FAR,
+
+			...LEFT_BOTTOM_FAR,
+			...LEFT_BOTTOM_CLOSE,
+			...RIGHT_BOTTOM_CLOSE,
+		], o);
 	}
 }
 
