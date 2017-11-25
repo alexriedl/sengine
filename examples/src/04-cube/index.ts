@@ -9,7 +9,7 @@ class Cube extends Entity {
 		this.setShader(new Shader.AmbientLightShader(
 			Buffer.createCube(),
 			Color.GREEN,
-			{ ambientIntensity: 0.7, color: Color.WHITE },
+			{ ambientIntensity: 0.2, color: Color.WHITE, direction: new vec3(2.5, -3, 1).normalize() },
 		));
 	}
 
@@ -25,7 +25,7 @@ class Cube extends Entity {
 		const mvpMatrix = modelViewMatrix.mul(projectionMatrix);
 
 		if (this.shader) {
-			this.shader.draw(gl, mvpMatrix);
+			this.shader.draw(gl, modelMatrix, mvpMatrix);
 		}
 
 		return this;
@@ -33,7 +33,7 @@ class Cube extends Entity {
 }
 
 const game = new Game('game-canvas');
-const cameraPosition = new vec3(1, 1, 2).normalize().scale(3);
+const cameraPosition = new vec3(0, 1, -2).normalize().scale(3);
 const camera = new Camera3D({ position: cameraPosition });
 const scene = new Scene(camera);
 const cube = new Cube().setParent(scene);

@@ -33,7 +33,7 @@ class SimpleObject extends Entity {
 		const mvpMatrix = modelViewMatrix.mul(projectionMatrix);
 
 		if (this.shader) {
-			this.shader.draw(gl, mvpMatrix);
+			this.shader.draw(gl, modelMatrix, mvpMatrix);
 		}
 
 		return this;

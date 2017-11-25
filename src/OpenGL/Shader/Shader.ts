@@ -62,7 +62,7 @@ export abstract class Shader {
 		return true;
 	}
 
-	public abstract draw(gl: WebGLRenderingContext, mvpMatrix: mat4): void;
+	public abstract draw(gl: WebGLRenderingContext, modelMatrix: mat4, mvpMatrix: mat4): void;
 
 	public static compileSource(gl: WebGLRenderingContext, type: number, source: string): WebGLShader {
 		const shader: WebGLShader = gl.createShader(type);

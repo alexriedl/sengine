@@ -70,7 +70,7 @@ export default class TextureShader extends Shader {
 		return metadata;
 	}
 
-	public draw(gl: WebGLRenderingContext, mvpMatrix: mat4): void {
+	public draw(gl: WebGLRenderingContext, _, mvpMatrix: mat4): void {
 		if (!this.bind(gl)) return;
 		if (!this.vertBuffer.bindVertex(gl, this.metadata.attributes.a_position)) return;
 		if (!this.uvBuffer.bindVertex(gl, this.metadata.attributes.a_texcoord)) return;

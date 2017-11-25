@@ -56,6 +56,49 @@ export default class mat4 {
 		]);
 	}
 
+	public inverse(): mat4 {
+		const m00 = this.m00 * this.m11 - this.m01 * this.m10;
+		const m01 = this.m00 * this.m12 - this.m02 * this.m10;
+		const m02 = this.m00 * this.m13 - this.m03 * this.m10;
+		const m03 = this.m01 * this.m12 - this.m02 * this.m11;
+		const m04 = this.m01 * this.m13 - this.m03 * this.m11;
+		const m05 = this.m02 * this.m13 - this.m03 * this.m12;
+		const m06 = this.m20 * this.m31 - this.m21 * this.m30;
+		const m07 = this.m20 * this.m32 - this.m22 * this.m30;
+		const m08 = this.m20 * this.m33 - this.m23 * this.m30;
+		const m09 = this.m21 * this.m32 - this.m22 * this.m31;
+		const m10 = this.m21 * this.m33 - this.m23 * this.m31;
+		const m11 = this.m22 * this.m33 - this.m23 * this.m32;
+
+		let determinant = m00 * m11 - m01 * m10 + m02 * m09 + m03 * m08 - m04 * m07 + m05 * m06;
+		if (!determinant) return null;
+		determinant = 1.0 / determinant;
+
+		const out00 = (this.m11 * m11 - this.m12 * m10 + this.m13 * m09) * determinant;
+		const out01 = (this.m02 * m10 - this.m01 * m11 - this.m03 * m09) * determinant;
+		const out02 = (this.m31 * m05 - this.m32 * m04 + this.m33 * m03) * determinant;
+		const out03 = (this.m22 * m04 - this.m21 * m05 - this.m23 * m03) * determinant;
+		const out10 = (this.m12 * m08 - this.m10 * m11 - this.m13 * m07) * determinant;
+		const out11 = (this.m00 * m11 - this.m02 * m08 + this.m03 * m07) * determinant;
+		const out12 = (this.m32 * m02 - this.m30 * m05 - this.m33 * m01) * determinant;
+		const out13 = (this.m20 * m05 - this.m22 * m02 + this.m23 * m01) * determinant;
+		const out20 = (this.m10 * m10 - this.m11 * m08 + this.m13 * m06) * determinant;
+		const out21 = (this.m01 * m08 - this.m00 * m10 - this.m03 * m06) * determinant;
+		const out22 = (this.m30 * m04 - this.m31 * m02 + this.m33 * m00) * determinant;
+		const out23 = (this.m21 * m02 - this.m20 * m04 - this.m23 * m00) * determinant;
+		const out30 = (this.m11 * m07 - this.m10 * m09 - this.m12 * m06) * determinant;
+		const out31 = (this.m00 * m09 - this.m01 * m07 + this.m02 * m06) * determinant;
+		const out32 = (this.m31 * m01 - this.m30 * m03 - this.m32 * m00) * determinant;
+		const out33 = (this.m20 * m03 - this.m21 * m01 + this.m22 * m00) * determinant;
+
+		return new mat4([
+			out00, out01, out02, out03,
+			out10, out11, out12, out13,
+			out20, out21, out22, out23,
+			out30, out31, out32, out33,
+		]);
+	}
+
 	public translate(v: vec3): mat4 {
 		if (!v || (v.x === 0 && v.y === 0 && v.z === 0)) return this;
 		const m30 = this.m00 * v.x + this.m10 * v.y + this.m20 * v.z + this.m30;

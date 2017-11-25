@@ -41,7 +41,7 @@ export default class Entity extends BaseEntity {
 		const mvpMatrix = modelViewMatrix.mul(projectionMatrix);
 
 		if (this.shader) {
-			this.shader.draw(gl, mvpMatrix);
+			this.shader.draw(gl, modelMatrix, mvpMatrix);
 		}
 
 		return super.render(gl, modelViewMatrix, projectionMatrix);
