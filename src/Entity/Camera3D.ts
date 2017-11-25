@@ -1,60 +1,77 @@
 import { mat4, vec3 } from '../Math';
+import { Field } from '../Utils';
 import Camera from './Camera';
 
 export interface IFrustum {
-	fovy?: number;
-	aspect?: number;
-	near?: number;
-	far?: number;
+	readonly fovy?: number;
+	readonly aspect?: number;
+	readonly near?: number;
+	readonly far?: number;
 }
 
 export interface IView {
-	position?: vec3;
-	target?: vec3;
-	up?: vec3;
+	readonly position?: vec3;
+	readonly target?: vec3;
+	readonly up?: vec3;
 }
 
 export default class Camera3D extends Camera {
-	public position: vec3;
-	public target: vec3;
-	public up: vec3;
+	private viewMatrix: mat4;
+	public readonly _view: Field<IView>;
+	public get view(): IView { return this._view.Value; }
+	public set view(value: IView) { this._view.Value = { ...this._view.Value, ...value }; }
 
-	public view: IView = {
-		position: new vec3(0, 0, 10),
-		target: new vec3(0, 0, 0),
-		up: new vec3(0, 1, 0),
-	};
-
-	public frustum: IFrustum = {
-		fovy: 90,
-		near: 0.01,
-		far: 100,
-	};
+	private projectionMatarix: mat4;
+	public readonly _frustum: Field<IFrustum>;
+	public get frustum(): IFrustum { return this._frustum.Value; }
+	public set frustum(value: IFrustum) { this._frustum.Value = { ...this._frustum.Value, ...value }; }
 
 	public constructor(view: IView = {}, frustum: IFrustum = {}) {
 		super();
 
-		this.view = {
-			...this.view,
+		this._view = new Field({
+			position: new vec3(0, 0, 10),
+			target: new vec3(0, 0, 0),
+			up: new vec3(0, 1, 0),
 			...view,
-		};
+		});
 
-		this.frustum = {
-			...this.frustum,
+		this._frustum = new Field({
+			fovy: 90,
+			near: 0.01,
+			far: 100,
 			...frustum,
-		};
+		});
 	}
 
 	public getViewMatrix(gl: WebGLRenderingContext): mat4 {
-		// TODO: Implement a dirty check so this is not calculated every frame
-		return mat4.lookAt(this.view.position, this.view.target, this.view.up);
+		if (!this.view || this._view.IsDirty) {
+			this.viewMatrix = mat4.lookAt(this.view.position, this.view.target, this.view.up);
+			this._view.markClean();
+		}
+
+		return this.viewMatrix;
 	}
 
 	public getProjectionMatrix(gl: WebGLRenderingContext): mat4 {
-		let aspect = this.frustum.aspect;
-		if (!aspect) aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
+		if (!this.frustum || this._frustum.IsDirty) {
+			if (!this.frustum.aspect) {
+				const aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
+				this.frustum = {
+					...this.frustum,
+					aspect,
+				};
+			}
 
-		// TODO: Implement a dirty check so this is not calculated every frame
-		return mat4.perspective(this.frustum.fovy, aspect, this.frustum.near, this.frustum.far);
+			this.projectionMatarix = mat4.perspective(
+				this.frustum.fovy,
+				this.frustum.aspect,
+				this.frustum.near,
+				this.frustum.far,
+			);
+			this._frustum.markClean();
+		}
+
+		return this.projectionMatarix;
 	}
 }

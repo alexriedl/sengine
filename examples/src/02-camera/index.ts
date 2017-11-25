@@ -44,9 +44,10 @@ export default class CameraExample extends Game {
 		const speed = 0.01 * deltaTime;
 		const vx = (-this.left * speed) + (+this.right * speed);
 		const vy = (-this.up * speed) + (+this.down * speed);
-		if (vx || vy) this.square.position = this.square.position.addValues(vx, vy, 0);
-
-		this.camera.position = new vec2(...this.square.position.xy);
+		if (vx || vy) {
+			this.square.position = this.square.position.addValues(vx, vy, 0);
+			this.camera.position = new vec2(...this.square.position.xy);
+		}
 	}
 }
 
