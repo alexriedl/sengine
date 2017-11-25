@@ -45,15 +45,16 @@ export default class Camera3D extends Camera {
 		};
 	}
 
-	public getViewProjectionMatrix(gl: WebGLRenderingContext): mat4 {
-		let aspect = this.frustum.aspect;
-		if (!aspect) {
-			aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
-		}
+	public getViewMatrix(gl: WebGLRenderingContext): mat4 {
+		// TODO: Implement a dirty check so this is not calculated every frame
+		return mat4.lookAt(this.view.position, this.view.target, this.view.up);
+	}
 
-		// TODO: Implement a dirty check so these are not calculated every frame
-		const projection = mat4.perspective(this.frustum.fovy, aspect, this.frustum.near, this.frustum.far);
-		const view = mat4.lookAt(this.view.position, this.view.target, this.view.up);
-		return view.mul(projection);
+	public getProjectionMatrix(gl: WebGLRenderingContext): mat4 {
+		let aspect = this.frustum.aspect;
+		if (!aspect) aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
+
+		// TODO: Implement a dirty check so this is not calculated every frame
+		return mat4.perspective(this.frustum.fovy, aspect, this.frustum.near, this.frustum.far);
 	}
 }

@@ -1,4 +1,4 @@
-import { mat4, vec2 } from '../Math';
+import { mat4, vec2, vec3 } from '../Math';
 import Camera from './Camera';
 
 export default class Camera2D extends Camera {
@@ -11,21 +11,20 @@ export default class Camera2D extends Camera {
 		this.position = position;
 	}
 
-	public getViewProjectionMatrix(gl: WebGLRenderingContext): mat4 {
+	public getViewMatrix(gl: WebGLRenderingContext): mat4 {
+		let position;
+		if (this.position) position = this.position.toVec3();
+		else position = new vec3();
+
+		return mat4.fromTranslation(position.negate());
+	}
+
+	public getProjectionMatrix(gl: WebGLRenderingContext): mat4 {
 		let size = this.size;
-		let position = this.position;
-
 		if (!size) size = new vec2(gl.drawingBufferWidth, gl.drawingBufferHeight);
-		if (!position) position = new vec2();
-
 		const halfSize = size.scale(0.5);
 
 		// TODO: Implement a dirty check so this is not calculated every frame
-		return mat4.ortho(
-			position.x - halfSize.x,
-			position.x + halfSize.x,
-			position.y + halfSize.y,
-			position.y - halfSize.y,
-			-1, 1);
+		return mat4.ortho(-halfSize.x, halfSize.x, halfSize.y, -halfSize.y, -1, 1);
 	}
 }

@@ -16,12 +16,13 @@ export default class Scene extends BaseEntity {
 
 	public render(gl: WebGLRenderingContext): this {
 		for (const camera of this.cameras) {
-			const vpMatrix = camera
+			camera
 				.setRenderTarget(gl)
 				.setViewport(gl)
-				.clearScreen(gl)
-				.getViewProjectionMatrix(gl);
-			super.render(gl, vpMatrix);
+				.clearScreen(gl);
+			const viewMatrix = camera.getViewMatrix(gl);
+			const projectionmatrix = camera.getProjectionMatrix(gl);
+			super.render(gl, viewMatrix, projectionmatrix);
 		}
 
 		return this;

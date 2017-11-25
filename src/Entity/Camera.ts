@@ -9,7 +9,8 @@ export default abstract class Camera {
 		// tslint:disable-next-line:no-bitwise
 	public readonly CLEAR_MASK = WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT;
 
-	public abstract getViewProjectionMatrix(gl: WebGLRenderingContext): mat4;
+	public abstract getViewMatrix(gl: WebGLRenderingContext): mat4;
+	public abstract getProjectionMatrix(gl: WebGLRenderingContext): mat4;
 
 	public setViewport(gl: WebGLRenderingContext): this {
 		let width;

@@ -35,14 +35,15 @@ export default class Entity extends BaseEntity {
 		return this;
 	}
 
-	public render(gl: WebGLRenderingContext, vpMatrix: mat4): this {
+	public render(gl: WebGLRenderingContext, viewMatrix: mat4, projectionMatrix: mat4): this {
 		const modelMatrix = mat4.fromTranslation(this.position).scale(this.scale);
-		const mvpMatrix = modelMatrix.mul(vpMatrix);
+		const modelViewMatrix = modelMatrix.mul(viewMatrix);
+		const mvpMatrix = modelViewMatrix.mul(projectionMatrix);
 
 		if (this.shader) {
 			this.shader.draw(gl, mvpMatrix);
 		}
 
-		return super.render(gl, mvpMatrix);
+		return super.render(gl, modelViewMatrix, projectionMatrix);
 	}
 }

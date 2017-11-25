@@ -3,9 +3,9 @@ import { mat4 } from '../Math';
 export default abstract class Entity {
 	public readonly children?: Entity[] = [];
 
-	public render(gl: WebGLRenderingContext, mvpMatrix: mat4): this {
+	public render(gl: WebGLRenderingContext, viewMatrix: mat4, projectionMatrix: mat4): this {
 		this.children.forEach((c) => {
-			c.render(gl, mvpMatrix);
+			c.render(gl, viewMatrix, projectionMatrix);
 		});
 
 		return this;

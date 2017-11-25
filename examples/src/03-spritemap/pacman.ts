@@ -54,7 +54,7 @@ export default class Pacman extends Entity {
 
 		// NOTE: Use the current frame during rendering
 		const frameIndex = this.direction[this.spriteFrame];
-		this.texCoords.options.offset = frameIndex * 8 * 4;
+		this.texCoords.options.bufferUsages[0].offset = frameIndex * 8 * 4;
 
 		const p = this.position;
 		let x = p.x + this.movementDirection.x * this.speed;

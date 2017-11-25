@@ -1,3 +1,4 @@
+// tslint:disable-next-line:no-implicit-dependencies
 import { Buffer, Camera3D, Color, Entity, Game, mat4, Scene, Shader, vec3 } from 'sengine';
 
 class Cube extends Entity {
@@ -17,10 +18,11 @@ class Cube extends Entity {
 		return this;
 	}
 
-	public render(gl: WebGLRenderingContext, vpMatrix: mat4): this {
+	public render(gl: WebGLRenderingContext, viewMatrix: mat4, projectionMatrix: mat4): this {
 		// TODO: Build rotation into Entity
 		const modelMatrix = mat4.fromTranslation(this.position).scale(this.scale).rotateY(this.rotation);
-		const mvpMatrix = modelMatrix.mul(vpMatrix);
+		const modelViewMatrix = modelMatrix.mul(viewMatrix);
+		const mvpMatrix = modelViewMatrix.mul(projectionMatrix);
 
 		if (this.shader) {
 			this.shader.draw(gl, mvpMatrix);
@@ -32,6 +34,8 @@ class Cube extends Entity {
 
 const game = new Game('game-canvas');
 const cameraPosition = new vec3(1, 1, 2).normalize().scale(3);
-game.setScene(new Scene(new Camera3D({ position: cameraPosition })));
-new Cube().setParent(game.scene);
+const camera = new Camera3D({ position: cameraPosition });
+const scene = new Scene(camera);
+const cube = new Cube().setParent(scene);
+game.setScene(scene);
 game.start();

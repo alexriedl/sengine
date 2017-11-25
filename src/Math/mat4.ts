@@ -56,29 +56,8 @@ export default class mat4 {
 		]);
 	}
 
-	public rotateY(radians: number) {
-		const s = Math.sin(radians);
-		const c = Math.cos(radians);
-
-		const m00 = this.m00 * c - this.m20 * s;
-		const m01 = this.m01 * c - this.m21 * s;
-		const m02 = this.m02 * c - this.m22 * s;
-		const m03 = this.m03 * c - this.m23 * s;
-
-		const m20 = this.m00 * s + this.m20 * c;
-		const m21 = this.m01 * s + this.m21 * c;
-		const m22 = this.m02 * s + this.m22 * c;
-		const m23 = this.m03 * s + this.m23 * c;
-
-		return new mat4([
-			m00, m01, m02, m03,
-			this.m10, this.m11, this.m12, this.m13,
-			m20, m21, m22, m23,
-			this.m30, this.m31, this.m32, this.m33,
-		]);
-	}
-
 	public translate(v: vec3): mat4 {
+		if (!v || (v.x === 0 && v.y === 0 && v.z === 0)) return this;
 		const m30 = this.m00 * v.x + this.m10 * v.y + this.m20 * v.z + this.m30;
 		const m31 = this.m01 * v.x + this.m11 * v.y + this.m21 * v.z + this.m31;
 		const m32 = this.m02 * v.x + this.m12 * v.y + this.m22 * v.z + this.m32;
@@ -92,6 +71,7 @@ export default class mat4 {
 	}
 
 	public scale(v: vec3): mat4 {
+		if (!v || (v.x === 1 && v.y === 1 && v.z === 1)) return this;
 		return new mat4([
 			this.m00 * v.x, this.m01 * v.x, this.m02 * v.x, this.m03 * v.x,
 			this.m10 * v.y, this.m11 * v.y, this.m12 * v.y, this.m13 * v.y,
@@ -126,6 +106,75 @@ export default class mat4 {
 			m10, m11, m12, m13,
 			m20, m21, m22, m23,
 			m30, m31, m32, m33,
+		]);
+	}
+
+	public rotateX(radians: number) {
+		if (!radians || radians === 0) return this;
+		const s = Math.sin(radians);
+		const c = Math.cos(radians);
+
+		const m10 = this.m10 * c + this.m20 * s;
+		const m11 = this.m11 * c + this.m21 * s;
+		const m12 = this.m12 * c + this.m22 * s;
+		const m13 = this.m13 * c + this.m23 * s;
+
+		const m20 = this.m20 * c - this.m10 * s;
+		const m21 = this.m21 * c - this.m11 * s;
+		const m22 = this.m22 * c - this.m12 * s;
+		const m23 = this.m23 * c - this.m13 * s;
+
+		return new mat4([
+			this.m00, this.m01, this.m02, this.m03,
+			m10, m11, m12, m13,
+			m20, m21, m22, m23,
+			this.m30, this.m31, this.m32, this.m33,
+		]);
+	}
+
+	public rotateY(radians: number) {
+		if (!radians || radians === 0) return this;
+		const s = Math.sin(radians);
+		const c = Math.cos(radians);
+
+		const m00 = this.m00 * c - this.m20 * s;
+		const m01 = this.m01 * c - this.m21 * s;
+		const m02 = this.m02 * c - this.m22 * s;
+		const m03 = this.m03 * c - this.m23 * s;
+
+		const m20 = this.m00 * s + this.m20 * c;
+		const m21 = this.m01 * s + this.m21 * c;
+		const m22 = this.m02 * s + this.m22 * c;
+		const m23 = this.m03 * s + this.m23 * c;
+
+		return new mat4([
+			m00, m01, m02, m03,
+			this.m10, this.m11, this.m12, this.m13,
+			m20, m21, m22, m23,
+			this.m30, this.m31, this.m32, this.m33,
+		]);
+	}
+
+	public rotateZ(radians: number) {
+		if (!radians || radians === 0) return this;
+		const s = Math.sin(radians);
+		const c = Math.cos(radians);
+
+		const m00 = this.m00 * c + this.m10 * s;
+		const m01 = this.m01 * c + this.m11 * s;
+		const m02 = this.m02 * c + this.m12 * s;
+		const m03 = this.m03 * c + this.m13 * s;
+
+		const m10 = this.m10 * c - this.m00 * s;
+		const m11 = this.m11 * c - this.m01 * s;
+		const m12 = this.m12 * c - this.m02 * s;
+		const m13 = this.m13 * c - this.m03 * s;
+
+		return new mat4([
+			m00, m01, m02, m03,
+			m10, m11, m12, m13,
+			this.m20, this.m21, this.m22, this.m23,
+			this.m30, this.m31, this.m32, this.m33,
 		]);
 	}
 

@@ -21,7 +21,8 @@ export class Buffer {
 			...Buffer.DEFAULT_OPTIONS,
 			...(options || this.options),
 		};
-		this.options.count = this.options.count || Math.floor(values.length / this.options.size);
+		const totalSize = this.options.bufferUsages.map((u) => u.size).reduce((a, b) => a + b, 0);
+		this.options.count = this.options.count || Math.floor(values.length / totalSize);
 		gl.bindBuffer(this.options.target, this.buffer);
 		gl.bufferData(this.options.target, new Float32Array(values), this.options.usage);
 
@@ -46,22 +47,28 @@ export class Buffer {
 		gl.bufferSubData(this.options.target, offset, new Float32Array(values));
 	}
 
-	public bindVertex(gl: WebGLRenderingContext, vertexAttributeIndex: number): boolean {
+	public bindVertex(gl: WebGLRenderingContext, vertexAttributeIndexs: number | number[]): boolean {
 		if (!this.buffer) return false;
 
-		gl.bindBuffer(this.options.target, this.buffer);
-		gl.vertexAttribPointer(vertexAttributeIndex, this.options.size, this.options.type,
-			this.options.normalized, this.options.stride, this.options.offset);
+		if (!Array.isArray(vertexAttributeIndexs)) {
+			vertexAttributeIndexs = [vertexAttributeIndexs];
+		}
 
-		// TODO: Does this need to be done every frame?
-		gl.enableVertexAttribArray(vertexAttributeIndex);
+		gl.bindBuffer(this.options.target, this.buffer);
+
+		for (let index = 0; index < vertexAttributeIndexs.length; index++) {
+			const attributeIndex = vertexAttributeIndexs[index];
+			const usage = this.options.bufferUsages[index];
+
+			gl.vertexAttribPointer(attributeIndex, usage.size, this.options.type,
+				this.options.normalized, usage.stride, usage.offset);
+
+			// TODO: Does this need to be done every frame?
+			gl.enableVertexAttribArray(attributeIndex);
+		}
 
 		return true;
 	}
-
-	public setSize(size: number): this { this.options.size = size; return this; }
-	public setStride(stride: number): this { this.options.stride = stride; return this; }
-	public setOffset(offset: number): this { this.options.offset = offset; return this; }
 }
 
 export namespace Buffer {
@@ -69,24 +76,25 @@ export namespace Buffer {
 	export interface IBufferOptions {
 		target?: number; /* : WebGLBufferTarget = gl.ARRAY_BUFFER */
 		usage?: number; /* : WebGLBufferUsage = gl.STATIC_DRAW */
-		size?: number; /* : number = 2 */
 		type?: number; /* : GLType = gl.FLOAT */
 		normalized?: boolean; /* : boolean = false */
-		stride?: number; /* : number = 0 */
-		offset?: number; /* : number = 0 */
 		count?: number; /* : number = Math.floor(values.length / size) */
 		renderMode?: number; /* : number = gl.TRIANGLE_FAN */
+		bufferUsages?: IBufferUsage[];
 	}
-	export const DEFAULT_OPTIONS = {
+	export interface IBufferUsage {
+		size?: number; /* : number = 2 */
+		stride?: number; /* : number = 0 */
+		offset?: number; /* : number = 0 */
+	}
+	export const DEFAULT_OPTIONS: IBufferOptions = {
 		target: WebGLRenderingContext.ARRAY_BUFFER,
 		usage: WebGLRenderingContext.STATIC_DRAW,
-		size: 2,
 		type: WebGLRenderingContext.FLOAT,
 		normalized: false,
-		stride: 0,
-		offset: 0,
 		count: undefined,
 		renderMode: WebGLRenderingContext.TRIANGLE_FAN,
+		bufferUsages: [ { size: 2, stride: 0, offset: 0 } ],
 	};
 
 	export function createGridUV(spriteDim: vec2, textureDim: vec2, totalSprites?: number,
@@ -116,11 +124,10 @@ export namespace Buffer {
 		return new Buffer(buffer, options);
 	}
 
-	export function createRectangleUV(minX: number = 0, minY: number = 0, maxX: number = 1, maxY: number = 1,
-		options?: IBufferOptions): Buffer {
+	export function createRectangleUV(minX: number = 0, minY: number = 0, maxX: number = 1, maxY: number = 1): Buffer {
 		const o: IBufferOptions = {
-			...options,
-			size: 2,
+			renderMode: WebGLRenderingContext.TRIANGLE_FAN,
+			bufferUsages: [{ size: 2 }],
 		};
 		return new Buffer([
 			minX, minY,
@@ -130,16 +137,16 @@ export namespace Buffer {
 		], o);
 	}
 
-	export function createSquare(size: number = 1, options?: IBufferOptions): Buffer {
-		return createRectangle(size, size, options);
+	export function createSquare(size: number = 1): Buffer {
+		return createRectangle(size, size);
 	}
 
-	export function createRectangle(width: number = 1, height: number = 1, options?: IBufferOptions): Buffer {
+	export function createRectangle(width: number = 1, height: number = 1): Buffer {
 		const halfWidth = width / 2;
 		const halfHeight = height / 2;
 		const o: IBufferOptions = {
-			...options,
-			size: 2,
+			renderMode: WebGLRenderingContext.TRIANGLE_FAN,
+			bufferUsages: [{ size: 2 }],
 		};
 		return new Buffer([
 			-halfWidth, -halfHeight,
@@ -149,15 +156,17 @@ export namespace Buffer {
 		], o);
 	}
 
-	export function createCube(width: number = 1, height: number = 1, depth: number = 1,
-		options?: IBufferOptions): Buffer {
+	export function createCube(width: number = 1, height: number = 1, depth: number = 1): Buffer {
 		const halfWidth = width / 2;
 		const halfHeight = height / 2;
 		const halfDepth = depth / 2;
+		const SIZE_OF_FLOAT = 4;
 		const o: IBufferOptions = {
-			...options,
-			size: 3,
 			renderMode: WebGLRenderingContext.TRIANGLES,
+			bufferUsages: [
+				{ size: 3, stride: 6 * SIZE_OF_FLOAT, offset: 0 * SIZE_OF_FLOAT },
+				{ size: 3, stride: 6 * SIZE_OF_FLOAT, offset: 3 * SIZE_OF_FLOAT },
+			],
 		};
 		const LEFT_BOTTOM_CLOSE = [-halfWidth, -halfHeight, -halfDepth];
 		const RIGHT_BOTTOM_CLOSE = [+halfWidth, -halfHeight, -halfDepth];
@@ -169,60 +178,67 @@ export namespace Buffer {
 		const RIGHT_TOP_FAR = [+halfWidth, +halfHeight, +halfDepth];
 		const LEFT_TOP_FAR = [-halfWidth, +halfHeight, +halfDepth];
 
+		const NORMAL_TOWARDS = [0, 0, -1];
+		const NORMAL_AWAY = [0, 0, 1];
+		const NORMAL_LEFT = [-1, 0, 0];
+		const NORMAL_RIGHT = [1, 0, 0];
+		const NORMAL_UP = [0, 1, 0];
+		const NORMAL_DOWN = [0, -1, 0];
+
 		return new Buffer([
 			// Front Face
-			...LEFT_BOTTOM_CLOSE,
-			...RIGHT_BOTTOM_CLOSE,
-			...RIGHT_TOP_CLOSE,
+			...LEFT_BOTTOM_CLOSE, ...NORMAL_TOWARDS,
+			...RIGHT_BOTTOM_CLOSE, ...NORMAL_TOWARDS,
+			...RIGHT_TOP_CLOSE, ...NORMAL_TOWARDS,
 
-			...RIGHT_TOP_CLOSE,
-			...LEFT_TOP_CLOSE,
-			...LEFT_BOTTOM_CLOSE,
+			...RIGHT_TOP_CLOSE, ...NORMAL_TOWARDS,
+			...LEFT_TOP_CLOSE, ...NORMAL_TOWARDS,
+			...LEFT_BOTTOM_CLOSE, ...NORMAL_TOWARDS,
 
 			// Back Face
-			...LEFT_BOTTOM_FAR,
-			...RIGHT_TOP_FAR,
-			...RIGHT_BOTTOM_FAR,
+			...LEFT_BOTTOM_FAR, ...NORMAL_AWAY,
+			...RIGHT_TOP_FAR, ...NORMAL_AWAY,
+			...RIGHT_BOTTOM_FAR, ...NORMAL_AWAY,
 
-			...RIGHT_TOP_FAR,
-			...LEFT_BOTTOM_FAR,
-			...LEFT_TOP_FAR,
+			...RIGHT_TOP_FAR, ...NORMAL_AWAY,
+			...LEFT_BOTTOM_FAR, ...NORMAL_AWAY,
+			...LEFT_TOP_FAR, ...NORMAL_AWAY,
 
 			// Left Face
-			...LEFT_BOTTOM_CLOSE,
-			...LEFT_TOP_CLOSE,
-			...LEFT_TOP_FAR,
+			...LEFT_BOTTOM_CLOSE, ...NORMAL_LEFT,
+			...LEFT_TOP_CLOSE, ...NORMAL_LEFT,
+			...LEFT_TOP_FAR, ...NORMAL_LEFT,
 
-			...LEFT_TOP_FAR,
-			...LEFT_BOTTOM_FAR,
-			...LEFT_BOTTOM_CLOSE,
+			...LEFT_TOP_FAR, ...NORMAL_LEFT,
+			...LEFT_BOTTOM_FAR, ...NORMAL_LEFT,
+			...LEFT_BOTTOM_CLOSE, ...NORMAL_LEFT,
 
 			// Right Face
-			...RIGHT_BOTTOM_CLOSE,
-			...RIGHT_TOP_FAR,
-			...RIGHT_TOP_CLOSE,
+			...RIGHT_BOTTOM_CLOSE, ...NORMAL_RIGHT,
+			...RIGHT_TOP_FAR, ...NORMAL_RIGHT,
+			...RIGHT_TOP_CLOSE, ...NORMAL_RIGHT,
 
-			...RIGHT_TOP_FAR,
-			...RIGHT_BOTTOM_CLOSE,
-			...RIGHT_BOTTOM_FAR,
+			...RIGHT_TOP_FAR, ...NORMAL_RIGHT,
+			...RIGHT_BOTTOM_CLOSE, ...NORMAL_RIGHT,
+			...RIGHT_BOTTOM_FAR, ...NORMAL_RIGHT,
 
 			// Top Face
-			...RIGHT_TOP_CLOSE,
-			...RIGHT_TOP_FAR,
-			...LEFT_TOP_FAR,
+			...RIGHT_TOP_CLOSE, ...NORMAL_UP,
+			...RIGHT_TOP_FAR, ...NORMAL_UP,
+			...LEFT_TOP_FAR, ...NORMAL_UP,
 
-			...LEFT_TOP_FAR,
-			...LEFT_TOP_CLOSE,
-			...RIGHT_TOP_CLOSE,
+			...LEFT_TOP_FAR, ...NORMAL_UP,
+			...LEFT_TOP_CLOSE, ...NORMAL_UP,
+			...RIGHT_TOP_CLOSE, ...NORMAL_UP,
 
 			// Bottom Face
-			...RIGHT_BOTTOM_CLOSE,
-			...RIGHT_BOTTOM_FAR,
-			...LEFT_BOTTOM_FAR,
+			...RIGHT_BOTTOM_CLOSE, ...NORMAL_DOWN,
+			...RIGHT_BOTTOM_FAR, ...NORMAL_DOWN,
+			...LEFT_BOTTOM_FAR, ...NORMAL_DOWN,
 
-			...LEFT_BOTTOM_FAR,
-			...LEFT_BOTTOM_CLOSE,
-			...RIGHT_BOTTOM_CLOSE,
+			...LEFT_BOTTOM_FAR, ...NORMAL_DOWN,
+			...LEFT_BOTTOM_CLOSE, ...NORMAL_DOWN,
+			...RIGHT_BOTTOM_CLOSE, ...NORMAL_DOWN,
 		], o);
 	}
 }

@@ -1,33 +1,8 @@
-import { Buffer, Camera2D, Color, Entity, Game, Scene, Shader, vec2, vec3 } from 'sengine';
+// tslint:disable-next-line:no-implicit-dependencies
+import { Buffer, Camera2D, Color, Entity, Game, mat4, Scene, Shader, vec2, vec3 } from 'sengine';
 
-export default class SimpleExample extends Game {
-	private camera: Camera2D;
-	private square: SimpleObject;
-	private time = Math.floor(Math.random() * 2500);
-
-	public constructor() {
-		super('game-canvas');
-		this.camera = new Camera2D(new vec2(500, 500));
-		this.setScene(new Scene(this.camera));
-		this.square = new SimpleObject(30).setParent(this.scene);
-	}
-
-	protected update(deltaTime: number): void {
-		this.time += deltaTime / 2000;
-
-		const s = Math.sin(this.time * 2);
-		const c = Math.cos(this.time) - 0.5;
-		const b = new Color(s * s, c * c, 1 - (s * s));
-
-		this.camera.setBackgroundColor(b);
-
-		this.square.position = new vec3(s * 50, c * 50);
-		this.square.setColor(new Color(1 - b.r, 1 - b.g, 1 - b.b));
-	}
-}
-
-// tslint:disable-next-line:max-classes-per-file
 class SimpleObject extends Entity {
+	private time = Math.floor(Math.random() * 2500);
 	protected shader: Shader.SimplerShader;
 
 	public constructor(size: number) {
@@ -35,9 +10,41 @@ class SimpleObject extends Entity {
 		this.setShader(new Shader.SimplerShader(Buffer.createSquare(size)));
 	}
 
-	public setColor(color: Color): void {
-		this.shader.setColor(color);
+	public update(deltaTime: number): this {
+		this.time += deltaTime / 2000;
+
+		const s = Math.sin(this.time * 3);
+		const c = Math.cos(this.time);
+		const b = new Color(s * s, c * c, 1 - (s * s));
+		const limit = boardSize * 0.4;
+
+		this.position = new vec3(s * limit, c * limit);
+		this.shader.setColor(new Color(1 - b.r, 1 - b.g, 1 - b.b));
+
+		camera.setBackgroundColor(b);
+
+		return this;
+	}
+
+	public render(gl: WebGLRenderingContext, viewMatrix: mat4, projectionMatrix: mat4): this {
+		// TODO: Build rotation into Entity
+		const modelMatrix = mat4.fromTranslation(this.position).scale(this.scale).rotateZ(this.time);
+		const modelViewMatrix = modelMatrix.mul(viewMatrix);
+		const mvpMatrix = modelViewMatrix.mul(projectionMatrix);
+
+		if (this.shader) {
+			this.shader.draw(gl, mvpMatrix);
+		}
+
+		return this;
 	}
 }
 
-new SimpleExample().start();
+const boardSize = 50;
+
+const game = new Game('game-canvas');
+const camera = new Camera2D(new vec2(boardSize, boardSize));
+const scene = new Scene(camera);
+const square = new SimpleObject(3).setParent(scene);
+game.setScene(scene);
+game.start();
