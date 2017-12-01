@@ -34,26 +34,27 @@ export abstract class Shader {
 
 	public initialize(gl: WebGLRenderingContext): void {
 		this.metadata.program = Shader.buildProgram(gl, this.metadata.vertex, this.metadata.fragment);
-		if (typeof this.metadata.attributes === 'object') {
-			Object.keys(this.metadata.attributes).forEach((key) => {
-				this.metadata.attributes[key] = gl.getAttribLocation(this.metadata.program, key);
-			});
-		}
 
-		// TODO: Come up with a more robust way to recursively pull values out of shader attributes/uniforms
-		if (typeof this.metadata.uniforms === 'object') {
-			Object.keys(this.metadata.uniforms).forEach((key) => {
-				if (typeof this.metadata.uniforms[key] === 'object') {
-					if (!this.metadata.uniforms[key]) this.metadata.uniforms[key] = {};
-					Object.keys(this.metadata.uniforms[key]).forEach((k) => {
-						this.metadata.uniforms[key][k] = gl.getUniformLocation(this.metadata.program, `${key}.${k}`);
-					});
-				}
-				else {
-					this.metadata.uniforms[key] = gl.getUniformLocation(this.metadata.program, key);
-				}
-			});
-		}
+		const getUniform = (path: string) => gl.getUniformLocation(this.metadata.program, path);
+		const getAttribute = (path: string) => gl.getAttribLocation(this.metadata.program, path);
+		this.metadata.uniforms = this.traverseObject(getUniform, this.metadata.uniforms);
+		this.metadata.attributes = this.traverseObject(getAttribute, this.metadata.attributes);
+	}
+
+	private traverseObject(getValue: (path: string) => any, source: any, path?: string): any {
+		if (!source) return;
+
+		Object.keys(source).forEach((key) => {
+			const fullPath = !!path ? `${path}.${key}` : key;
+			if (typeof source[key] === 'object') {
+				source[key] = this.traverseObject(getValue, source[key], fullPath);
+			}
+			else {
+				source[key] = getValue(fullPath);
+			}
+		});
+
+		return source;
 	}
 
 	protected bind(gl: WebGLRenderingContext): boolean {
