@@ -17,10 +17,12 @@ export class Buffer {
 		const values = this.asyncInitializeSettings.values;
 		const options = this.asyncInitializeSettings.options;
 
-		this.options = {
+		// NOTE: Deep copy options to ensure no re-use of object
+		// TODO: Find a more performant way to ensure this
+		this.options = JSON.parse(JSON.stringify({
 			...Buffer.DEFAULT_OPTIONS,
 			...(options || this.options),
-		};
+		}));
 		const totalSize = this.options.bufferUsages.map((u) => u.size).reduce((a, b) => a + b, 0);
 		this.options.count = this.options.count || Math.floor(values.length / totalSize);
 		gl.bindBuffer(this.options.target, this.buffer);
