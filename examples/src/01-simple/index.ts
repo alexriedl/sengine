@@ -3,11 +3,11 @@ import { Buffer, Camera2D, Color, Entity, Game, mat4, Scene, Shader, vec2, vec3 
 
 class SimpleObject extends Entity {
 	private time = Math.floor(Math.random() * 2500);
-	protected shader: Shader.SimplerShader;
+	protected shader: Shader.SimpleShader;
 
 	public constructor(size: number) {
 		super();
-		this.setShader(new Shader.SimplerShader(Buffer.createSquare(size)));
+		this.setShader(new Shader.SimpleShader(Buffer.createSquare(size)));
 	}
 
 	public update(deltaTime: number): this {
