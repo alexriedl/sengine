@@ -1,4 +1,5 @@
-import { Buffer, Camera2D, Color, Entity, Game, Scene, Shader, vec2, vec3 } from 'sengine';
+// tslint:disable-next-line:no-implicit-dependencies
+import { Buffer, Camera2D, Color, Entity, Game, Scene, Shader, Texture, vec2 } from 'sengine';
 
 export default class CameraExample extends Game {
 	private camera: Camera2D;
@@ -14,9 +15,15 @@ export default class CameraExample extends Game {
 		this.camera = new Camera2D(new vec2(10, 10));
 		this.setScene(new Scene(this.camera));
 
-		new Entity().setShader(new Shader.SimplerShader(Buffer.createSquare(10), Color.BLUE)).setParent(this.scene);
+		const shader = new Shader.TextureShader(
+			Buffer.createSquare(10),
+			Buffer.createRectangleUV(),
+			new Texture(),
+		);
+		new Entity().setShader(shader).setParent(this.scene);
+
 		this.square = new Entity()
-			.setShader(new Shader.SimplerShader(Buffer.createSquare(1), Color.GREEN))
+			.setShader(new Shader.SimpleShader(Buffer.createSquare(1), Color.GREEN))
 			.setParent(this.scene);
 	}
 
