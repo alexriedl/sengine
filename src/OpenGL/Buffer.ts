@@ -116,9 +116,8 @@ export namespace Buffer {
 		bufferUsages: [ { size: 2, stride: 0, offset: 0 } ],
 	};
 
-	export function createGridUV(spriteDim: vec2, textureDim: vec2, totalSprites?: number,
-		paddingDim: vec2 = new vec2(), options?: IBufferOptions): Buffer {
-		if (!totalSprites) totalSprites = 3; // TODO: Actually calculate this
+	export function createGridUV(spriteDim: vec2, textureDim: vec2, totalSprites: number,
+		paddingDim: vec2 = new vec2()): Buffer {
 
 		const buffer = [];
 		let count = 0;
@@ -140,11 +139,15 @@ export namespace Buffer {
 			}
 		}
 
+		const options: IBufferOptions = {
+			renderMode: WebGLRenderingContext.TRIANGLE_FAN,
+			bufferUsages: [{ size: 2 }],
+		};
 		return new Buffer(buffer, options);
 	}
 
 	export function createRectangleUV(minX: number = 0, minY: number = 0, maxX: number = 1, maxY: number = 1): Buffer {
-		const o: IBufferOptions = {
+		const options: IBufferOptions = {
 			renderMode: WebGLRenderingContext.TRIANGLE_FAN,
 			bufferUsages: [{ size: 2 }],
 		};
@@ -153,7 +156,7 @@ export namespace Buffer {
 			maxX, minY,
 			maxX, maxY,
 			minX, maxY,
-		], o);
+		], options);
 	}
 
 	export function createSquare(size: number = 1): Buffer {
@@ -163,7 +166,7 @@ export namespace Buffer {
 	export function createRectangle(width: number = 1, height: number = 1): Buffer {
 		const halfWidth = width / 2;
 		const halfHeight = height / 2;
-		const o: IBufferOptions = {
+		const options: IBufferOptions = {
 			renderMode: WebGLRenderingContext.TRIANGLE_FAN,
 			bufferUsages: [{ size: 2 }],
 		};
@@ -172,7 +175,7 @@ export namespace Buffer {
 			+halfWidth, -halfHeight,
 			+halfWidth, +halfHeight,
 			-halfWidth, +halfHeight,
-		], o);
+		], options);
 	}
 
 	export function createCube(width: number = 1, height: number = 1, depth: number = 1): Buffer {
@@ -180,7 +183,7 @@ export namespace Buffer {
 		const halfHeight = height / 2;
 		const halfDepth = depth / 2;
 		const SIZE_OF_FLOAT = 4;
-		const o: IBufferOptions = {
+		const options: IBufferOptions = {
 			renderMode: WebGLRenderingContext.TRIANGLES,
 			bufferUsages: [
 				{ size: 3, stride: 6 * SIZE_OF_FLOAT, offset: 0 * SIZE_OF_FLOAT },
@@ -258,7 +261,7 @@ export namespace Buffer {
 			...LEFT_BOTTOM_FAR, ...NORMAL_DOWN,
 			...LEFT_BOTTOM_CLOSE, ...NORMAL_DOWN,
 			...RIGHT_BOTTOM_CLOSE, ...NORMAL_DOWN,
-		], o);
+		], options);
 	}
 }
 
