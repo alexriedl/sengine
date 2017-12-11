@@ -5,30 +5,42 @@ export class Buffer {
 	protected buffer: WebGLBuffer;
 	public options: Buffer.IBufferOptions;
 
-	protected asyncInitializeSettings: { values: number[], options?: Buffer.IBufferOptions };
+	protected asyncSetBufferSettings: { values: number[], options?: Buffer.IBufferOptions };
+	protected asyncUpdateBufferSettings: { values: number[], offset: number };
 
 	constructor(values: number[], options?: Buffer.IBufferOptions) {
 		this.setBuffer(values, options);
 	}
 
 	public initialize(gl: WebGLRenderingContext): void {
-		if (!this.asyncInitializeSettings) return;
-		if (!this.buffer) this.buffer = gl.createBuffer();
-		const values = this.asyncInitializeSettings.values;
-		const options = this.asyncInitializeSettings.options;
+		if (this.asyncSetBufferSettings) {
+			if (!this.buffer) this.buffer = gl.createBuffer();
+			const values = this.asyncSetBufferSettings.values;
+			const options = this.asyncSetBufferSettings.options;
 
-		// NOTE: Deep copy options to ensure no re-use of object
-		// TODO: Find a more performant way to ensure this
-		this.options = JSON.parse(JSON.stringify({
-			...Buffer.DEFAULT_OPTIONS,
-			...(options || this.options),
-		}));
-		const totalSize = this.options.bufferUsages.map((u) => u.size).reduce((a, b) => a + b, 0);
-		this.options.count = this.options.count || Math.floor(values.length / totalSize);
-		gl.bindBuffer(this.options.target, this.buffer);
-		gl.bufferData(this.options.target, new Float32Array(values), this.options.usage);
+			// NOTE: Deep copy options to ensure no re-use of object
+			// TODO: Find a more performant way to ensure this
+			this.options = JSON.parse(JSON.stringify({
+				...Buffer.DEFAULT_OPTIONS,
+				...this.options,
+				...options,
+			}));
+			const totalSize = this.options.bufferUsages.map((u) => u.size).reduce((a, b) => a + b, 0);
+			this.options.count = this.options.count || Math.floor(values.length / totalSize);
+			gl.bindBuffer(this.options.target, this.buffer);
+			gl.bufferData(this.options.target, new Float32Array(values), this.options.usage);
 
-		this.asyncInitializeSettings = undefined;
+			this.asyncSetBufferSettings = undefined;
+		}
+
+		if (this.asyncUpdateBufferSettings) {
+			if (!this.buffer) return;
+			const values = this.asyncUpdateBufferSettings.values;
+			const offset = this.asyncUpdateBufferSettings.offset;
+
+			gl.bindBuffer(this.options.target, this.buffer);
+			gl.bufferSubData(this.options.target, offset, new Float32Array(values));
+		}
 	}
 
 	/**
@@ -36,17 +48,22 @@ export class Buffer {
 	 * If the data is changing, but staying the same size, use updateBuffer instead.
 	 */
 	public setBuffer(values: number[], options?: Buffer.IBufferOptions) {
-		this.asyncInitializeSettings = { values, options };
+		this.asyncSetBufferSettings = { values, options };
 		Register.registerGLItem(this);
 	}
 
 	/**
-	 * Updates the values within a buffer. This is the perfered method to update values if the size
-	 * of the buffer does not change. Do not call this function if the buffer's size changes.
+	 * Updates the values within a buffer. This is the preferred method to update values if the size
+	 * of the buffer does not change. Do not call this function if the buffer's size changes. Offset is in bytes.
+	 * Example:
+	 * Current Buffer: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+	 * To Replace 4 and 5 with 8 and 9, call:
+	 * const SIZE_OF_FLOAT = 4;
+	 * b.updateBuffer([8, 9], 4 * SIZE_OF_FLOAT);
 	 */
-	public updateBuffer(gl: WebGLRenderingContext, values: number[], offset: number = 0): void {
-		gl.bindBuffer(this.options.target, this.buffer);
-		gl.bufferSubData(this.options.target, offset, new Float32Array(values));
+	public updateBuffer(values: number[], offset: number = 0): void {
+		this.asyncUpdateBufferSettings = { values, offset };
+		Register.registerGLItem(this);
 	}
 
 	public bindVertex(gl: WebGLRenderingContext, vertexAttributeIndexs: number | number[]): boolean {
