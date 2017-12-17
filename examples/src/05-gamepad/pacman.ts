@@ -3,8 +3,6 @@ import '../../rsc/pacman.png';
 // tslint:disable-next-line:no-implicit-dependencies
 import { Buffer, Entity, Shader, vec2, vec3 } from 'sengine';
 
-import { propertyTracker } from '../../../src/Utils/Performance';
-
 const TOTAL_FRAME_TIME = (100 / 6) * 3;
 const LEFT: number[] = [0, 1, 2, 1];
 const RIGHT: number[] = [0, 3, 4, 3];
@@ -47,11 +45,6 @@ export default class Pacman extends Entity {
 	}
 
 	public update(deltaTime: number): this {
-		return this.ttt(deltaTime);
-	}
-
-	@propertyTracker()
-	public ttt = (deltaTime: number): this => {
 		// NOTE: Only update the frame on exact fps
 		this.frameTime -= deltaTime;
 		if (this.frameTime <= 0) {
