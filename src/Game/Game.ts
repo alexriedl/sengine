@@ -1,6 +1,5 @@
-import { Scene } from '../Entity';
-import { Canvas } from '../OpenGL';
-import { Register } from '../Utils';
+import { Canvas, Performance, Register, Scene } from '..';
+import { methodTracker } from '../Utils/Performance';
 
 export default class Game {
 	public scene: Scene;
@@ -39,10 +38,12 @@ export default class Game {
 		return old;
 	}
 
+	@methodTracker()
 	protected update(deltaTime: number): void {
 		if (this.scene) this.scene.update(deltaTime);
 	}
 
+	@methodTracker()
 	protected render(): void {
 		if (this.scene) this.scene.render(this.gl);
 	}
@@ -57,7 +58,7 @@ export default class Game {
 		this.running = false;
 	}
 
-	protected frame = (now: number) => {
+	protected frame = (now: number): void => {
 		if (!this.running) {
 			this.then = undefined;
 			return;
@@ -69,14 +70,19 @@ export default class Game {
 			this.then = now;
 
 			if (skipFrame) {
+				console.log('Skipping bad frame');
 				requestAnimationFrame(this.frame);
 				return;
 			}
 		}
 
+		Performance.frameStart();
+
 		Register.initializeGLItems(this.gl);
 		this.update(deltaTime);
 		this.render();
+
+		Performance.frameEnd();
 
 		requestAnimationFrame(this.frame);
 	}

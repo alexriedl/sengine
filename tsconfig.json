@@ -7,7 +7,8 @@
     "skipDefaultLibCheck": true,
     "allowJs": false,
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules",
