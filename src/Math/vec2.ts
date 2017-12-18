@@ -3,9 +3,10 @@ import vec3 from './vec3';
 
 // tslint:disable-next-line:class-name
 export default class vec2 {
-	public readonly x: number;
-	public readonly y: number;
+	private readonly values: Float32Array;
 
+	public get x(): number { return this.values[0]; }
+	public get y(): number { return this.values[1]; }
 	public get xy(): number[] { return [this.x, this.y]; }
 
 	public len = this.length;
@@ -17,8 +18,7 @@ export default class vec2 {
 	public sqrLen = this.squaredLength;
 
 	public constructor(x: number = 0, y: number = 0) {
-		this.x = x;
-		this.y = y;
+		this.values = new Float32Array([x, y]);
 	}
 
 	public toVec3(z: number = 0) {
@@ -226,14 +226,14 @@ export default class vec2 {
 	 * Returns a Float32Array with the components from this vector
 	 */
 	public toFloat32Array(): Float32Array {
-		return new Float32Array([this.x, this.y]);
+		return this.values;
 	}
 
 	/**
 	 * Returns a Float64Array with the components from this vector
 	 */
 	public toFloat64Array(): Float64Array {
-		return new Float64Array([this.x, this.y]);
+		return new Float64Array(this.values);
 	}
 
 	/**

@@ -2,16 +2,17 @@ import { mod } from './scalar';
 
 // tslint:disable-next-line:class-name
 export default class vec3 {
-	public readonly x: number;
-	public readonly y: number;
-	public readonly z: number;
+	private readonly values: Float32Array;
 
+	public get x(): number { return this.values[0]; }
+	public get y(): number { return this.values[1]; }
+	public get z(): number { return this.values[2]; }
 	public get xy(): number[] { return [this.x, this.y]; }
 	public get yz(): number[] { return [this.y, this.z]; }
 	public get xyz(): number[] { return [this.x, this.y, this.z]; }
-	public get r(): number { return this.x; }
-	public get g(): number { return this.y; }
-	public get b(): number { return this.z; }
+	public get r(): number { return this.values[0]; }
+	public get g(): number { return this.values[1]; }
+	public get b(): number { return this.values[2]; }
 	public get rgb(): number[] { return [this.r, this.g, this.b]; }
 
 	public len = this.length;
@@ -23,9 +24,7 @@ export default class vec3 {
 	public sqrLen = this.squaredLength;
 
 	public constructor(x: number = 0, y: number = 0, z: number = 0) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.values = new Float32Array([x, y, z]);
 	}
 
 	/**
@@ -234,14 +233,14 @@ export default class vec3 {
 	 * Returns a Float32Array with the components from this vector
 	 */
 	public toFloat32Array(): Float32Array {
-		return new Float32Array([this.x, this.y, this.z]);
+		return this.values;
 	}
 
 	/**
 	 * Returns a Float64Array with the components from this vector
 	 */
 	public toFloat64Array(): Float64Array {
-		return new Float64Array([this.x, this.y, this.z]);
+		return new Float64Array(this.values);
 	}
 
 	/**

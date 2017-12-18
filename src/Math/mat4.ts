@@ -6,7 +6,7 @@ import vec3 from './vec3';
 // tslint:disable-next-line:class-name
 export default class mat4 {
 	public static readonly EPSILON = 0.000001;
-	private elements: number[];
+	private readonly elements: Float32Array;
 
 	public get m00(): number { return this.elements[0]; }
 	public get m01(): number { return this.elements[1]; }
@@ -27,15 +27,18 @@ export default class mat4 {
 
 	public mul = this.multiply;
 
-	public constructor(elements?: number[]) {
-		if (elements) this.elements = [...elements];
+	public constructor(elements?: number[] | Float32Array) {
+		if (elements) {
+			if (elements instanceof Float32Array) this.elements = elements;
+			else this.elements = new Float32Array([...elements]);
+		}
 		else {
-			this.elements = [
+			this.elements = new Float32Array([
 				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
 				0, 0, 0, 1,
-			];
+			]);
 		}
 	}
 
@@ -233,7 +236,7 @@ export default class mat4 {
 	}
 
 	public toFloat32Array(): Float32Array {
-		return new Float32Array(this.elements);
+		return this.elements;
 	}
 
 	public toFloat64Array(): Float64Array {
