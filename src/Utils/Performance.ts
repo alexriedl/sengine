@@ -7,7 +7,9 @@ interface ICallStats {
 	ave: number;
 }
 
-let frameStats: IStringMap<ICallStats> = {};
+const FRAME_STATS_BUFFER_SIZE = 300;
+const frameStats: Array<IStringMap<ICallStats>> = [];
+let frameStatsIndex: number = 0;
 let frameTimers: IStringMap<number[]> = {};
 let logFrameStats: boolean = false;
 
@@ -16,12 +18,12 @@ export function enableFrameStatLogs(): void {
 }
 
 export function frameStart(): void {
-	//
+	frameStats[frameStatsIndex] = {};
 }
 
 export function startBlock(key: string): number {
-	if (!frameStats[key]) {
-		frameStats[key] = {
+	if (!frameStats[frameStatsIndex][key]) {
+		frameStats[frameStatsIndex][key] = {
 			ave: 0,
 			count: 0,
 			min: Number.MAX_SAFE_INTEGER,
@@ -36,7 +38,7 @@ export function startBlock(key: string): number {
 }
 
 export function endBlock(key: string, index: number): void {
-	const stats = frameStats[key];
+	const stats = frameStats[frameStatsIndex][key];
 	if (!stats) {
 		console.error(`Missing stats for ${key}`);
 	}
@@ -56,14 +58,20 @@ export function endBlock(key: string, index: number): void {
 }
 
 export function frameEnd(): void {
-	if (logFrameStats) console.log(frameStats);
-	frameStats = {};
+	if (logFrameStats) console.log(frameStats[frameStatsIndex]);
+	frameStatsIndex = (frameStatsIndex + 1) % FRAME_STATS_BUFFER_SIZE;
 	frameTimers = {};
 }
 
+let UNIQUE_GLOBAL_IDENTIFIER = 0;
+function getObjectName(target: any, key: string): string {
+	const objectName = (`${UNIQUE_GLOBAL_IDENTIFIER++}::`) + (target ? `${target.constructor.name}::` : '') + key;
+	return objectName;
+}
+
 const privatePropertyTracker = (target: any, key: string): void => {
-	const objectName = (target ? target.constructor.name + '::' : '') + key;
-	console.log(`Tracking property ${objectName}`);
+	const objectName = getObjectName(target, key);
+	console.log(`Tracking debug timing info for property ${objectName}`);
 
 	let value;
 	const tracker = function() {
@@ -91,15 +99,14 @@ const privatePropertyTracker = (target: any, key: string): void => {
 };
 
 const privateMethodTracker = (target: any, key: string, descriptor: PropertyDescriptor): PropertyDescriptor => {
-	const objectName = (target ? target.constructor.name + '::' : '') + key;
-	console.log(`Tracking method ${objectName}`);
+	const objectName = getObjectName(target, key);
+	console.log(`Tracking debug timing info for method ${objectName}`);
 
 	if (descriptor === undefined) {
 		descriptor = Object.getOwnPropertyDescriptor(target, key);
 	}
 	const originalMethod = descriptor.value;
 
-	// tslint:disable-next-line:only-arrow-functions
 	descriptor.value = function() {
 		const index = startBlock(objectName);
 		const result = originalMethod.apply(this, arguments);
