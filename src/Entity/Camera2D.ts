@@ -1,4 +1,4 @@
-import { mat4, vec2, vec3 } from '../Math';
+import { mat4, vec2 } from '../Math';
 import { Field } from '../Utils';
 import Camera from './Camera';
 

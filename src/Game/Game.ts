@@ -1,8 +1,7 @@
 import { Canvas, Performance, Register, Scene } from '..';
-import { methodTracker } from '../Utils/Performance';
 
 export default class Game {
-	public scene: Scene;
+	private scenes: Scene[] = [];
 	private gl: WebGLRenderingContext;
 
 	private then: number;
@@ -32,20 +31,27 @@ export default class Game {
 	 * Set the scene for the game. The default update/render functions redirect logic to this scene.
 	 * The old scene will be returned
 	 */
-	public setScene(scene: Scene): Scene {
-		const old = this.scene;
-		this.scene = scene;
-		return old;
+	public setScene(scene: Scene, index: number = 0): this {
+		this.scenes[index] = scene;
+		return this;
 	}
 
-	@methodTracker()
 	protected update(deltaTime: number): void {
-		if (this.scene) this.scene.update(deltaTime);
+		for (const scene of this.scenes) {
+			scene.update(deltaTime);
+		}
 	}
 
-	@methodTracker()
+	protected clearScreen(): void {
+		for (const scene of this.scenes) {
+			scene.clearScreen(this.gl);
+		}
+	}
+
 	protected render(): void {
-		if (this.scene) this.scene.render(this.gl);
+		for (const scene of this.scenes) {
+			scene.render(this.gl);
+		}
 	}
 
 	public start(): void {
@@ -80,6 +86,7 @@ export default class Game {
 
 		Register.initializeGLItems(this.gl);
 		this.update(deltaTime);
+		this.clearScreen();
 		this.render();
 
 		Performance.frameEnd();

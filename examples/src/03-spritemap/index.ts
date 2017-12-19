@@ -17,8 +17,9 @@ export default class SpriteMapExample extends Game {
 		const width = 10;
 		const height = 10;
 
-		this.setScene(new Scene(new Camera2D(new vec2(width, height))));
-		this.pacman = new Pacman(width, height).setParent(this.scene);
+		const scene = new Scene(new Camera2D(new vec2(width, height)));
+		this.setScene(scene);
+		this.pacman = new Pacman(width, height).setParent(scene);
 	}
 
 	public onkeydown = (event: KeyboardEvent): boolean => {

@@ -13,18 +13,19 @@ export default class CameraExample extends Game {
 	public constructor() {
 		super('game-canvas');
 		this.camera = new Camera2D(new vec2(10, 10));
-		this.setScene(new Scene(this.camera));
+		const scene = new Scene(this.camera);
+		this.setScene(scene);
 
 		const shader = new Shader.TextureShader(
 			Buffer.createSquare(10),
 			Buffer.createRectangleUV(),
 			new Texture(),
 		);
-		new Entity().setShader(shader).setParent(this.scene);
+		new Entity().setShader(shader).setParent(scene);
 
 		this.square = new Entity()
 			.setShader(new Shader.SimpleShader(Buffer.createSquare(1), Color.GREEN))
-			.setParent(this.scene);
+			.setParent(scene);
 	}
 
 	public onkeydown = (event: KeyboardEvent): boolean => {

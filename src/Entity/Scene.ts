@@ -1,3 +1,4 @@
+import { methodTracker } from '../Utils/Performance';
 import BaseEntity from './BaseEntity';
 import Camera from './Camera';
 
@@ -14,17 +15,30 @@ export default class Scene extends BaseEntity {
 		}
 	}
 
+	@methodTracker()
+	public clearScreen(gl: WebGLRenderingContext): this {
+		for (const camera of this.cameras) {
+			camera.clearScreen(gl);
+		}
+		return this;
+	}
+
+	@methodTracker()
 	public render(gl: WebGLRenderingContext): this {
 		for (const camera of this.cameras) {
 			camera
 				.setRenderTarget(gl)
-				.setViewport(gl)
-				.clearScreen(gl);
+				.setViewport(gl);
 			const viewMatrix = camera.getViewMatrix(gl);
 			const projectionmatrix = camera.getProjectionMatrix(gl);
 			super.render(gl, viewMatrix, projectionmatrix);
 		}
 
 		return this;
+	}
+
+	@methodTracker()
+	public update(deltaTime: number): this {
+		return super.update(deltaTime);
 	}
 }
