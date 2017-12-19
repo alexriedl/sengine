@@ -3,26 +3,32 @@ import { Register } from '../Utils';
 
 // tslint:disable:max-line-length
 export class Texture {
-	private data: Uint8Array | string;
-	private options: Texture.IBaseTextureOptions | Texture.ITextureOptionsN | Texture.ITextureOptionsV;
-	private texture: WebGLTexture;
+	private asyncInitializingInfo: {
+		data: Uint8Array | string;
+		options: Texture.IBaseTextureOptions | Texture.ITextureOptionsN | Texture.ITextureOptionsV;
+	};
+	private texture: Texture.ITextureOptionsResult;
+
+	public get webGLTexture(): WebGLTexture { return this.texture.texture; }
+	public get webGLTarget(): number { return this.texture.target; }
+	public get width(): number { return this.texture.width; }
+	public get height(): number { return this.texture.height; }
 
 	constructor(source: string, options?: Texture.IBaseTextureOptions);
 	constructor(data: Uint8Array, options: Texture.ITextureOptionsN | Texture.ITextureOptionsV);
 	constructor(data?: string | Uint8Array, options?: Texture.IBaseTextureOptions | Texture.ITextureOptionsN | Texture.ITextureOptionsV);
 	constructor(data?: string | Uint8Array, options?: Texture.IBaseTextureOptions | Texture.ITextureOptionsN | Texture.ITextureOptionsV) {
-		this.data = data;
-		this.options = options;
+		this.asyncInitializingInfo = { data, options };
 		Register.registerGLItem(this);
 	}
 
 	public initialize(gl: WebGLRenderingContext): void {
-		this.texture = Texture.create(gl, this.data, this.options);
+		this.texture = Texture.create(gl, this.asyncInitializingInfo.data, this.asyncInitializingInfo.options);
 	}
 
 	public bind(gl: WebGLRenderingContext): boolean {
-		if (!this.texture) return false;
-		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.texture);
+		if (!this.webGLTexture) return false;
+		gl.bindTexture(WebGLRenderingContext.TEXTURE_2D, this.webGLTexture);
 		return true;
 	}
 }
@@ -70,11 +76,16 @@ export namespace Texture {
 		height: number;
 	}
 
-	export function create(gl: WebGLRenderingContext, source: string, options?: IBaseTextureOptions): WebGLTexture;
-	export function create(gl: WebGLRenderingContext, data: Uint8Array, options: ITextureOptionsN | ITextureOptionsV): WebGLTexture;
-	export function create(gl: WebGLRenderingContext, data: string | Uint8Array, options?: IBaseTextureOptions | ITextureOptionsN | ITextureOptionsV): WebGLTexture;
-	export function create(gl: WebGLRenderingContext, data?: string | Uint8Array, options?: IBaseTextureOptions | ITextureOptionsN | ITextureOptionsV): WebGLTexture {
-		options = { ...DEFAULT_OPTIONS, ...(options && options) };
+	export interface ITextureOptionsResult extends ITextureOptionsN {
+		texture: WebGLTexture;
+	}
+
+	export function create(gl: WebGLRenderingContext, source: string, options?: IBaseTextureOptions): ITextureOptionsResult;
+	export function create(gl: WebGLRenderingContext, data: Uint8Array, options: ITextureOptionsN | ITextureOptionsV): ITextureOptionsResult;
+	export function create(gl: WebGLRenderingContext, data: string | Uint8Array, options?: IBaseTextureOptions | ITextureOptionsN | ITextureOptionsV): ITextureOptionsResult;
+	export function create(gl: WebGLRenderingContext, data?: string | Uint8Array, options?: IBaseTextureOptions | ITextureOptionsN | ITextureOptionsV): ITextureOptionsResult {
+		options = { ...DEFAULT_OPTIONS, ...options };
+
 		let w;
 		let h;
 		let source;
@@ -105,6 +116,13 @@ export namespace Texture {
 
 		gl.bindTexture(options.target, null);
 
+		const outOptions = {
+			...options,
+			width: w,
+			height: h,
+			texture,
+		};
+
 		if (source) {
 			const image = new Image();
 			image.src = source;
@@ -112,10 +130,13 @@ export namespace Texture {
 				gl.bindTexture(options.target, texture);
 				gl.texImage2D(options.target, 0, WebGLRenderingContext.RGBA, WebGLRenderingContext.RGBA, WebGLRenderingContext.UNSIGNED_BYTE, image);
 				gl.bindTexture(options.target, null);
+
+				outOptions.width = image.width;
+				outOptions.height = image.height;
 			};
 		}
 
-		return texture;
+		return outOptions;
 	}
 }
 
