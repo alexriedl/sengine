@@ -8,7 +8,7 @@ namespace Performance {
 		ave: number;
 	}
 
-	const FRAME_STATS_BUFFER_SIZE = 300;
+	export const FRAME_STATS_BUFFER_SIZE = 50;
 	const frameStats: Array<IStringMap<ICallStats>> = [];
 	let frameStatsIndex: number = 0;
 	let frameTimers: IStringMap<number[]> = {};
@@ -75,6 +75,7 @@ namespace Performance {
 		const objectName = getObjectName(target, key);
 		console.log(`Tracking debug timing info for property ${objectName}`);
 
+		// TODO: This assumes the property is a function. Update the tracker to verify this
 		let value;
 		const tracker = function() {
 			if (!value) return;
