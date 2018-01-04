@@ -24,8 +24,13 @@ export default class vec3 {
 	public sqrLen = this.squaredLength;
 
 	public constructor(x: number = 0, y: number = 0, z: number = 0) {
+		// TODO: Dont new up an array right away. if the vector ends up only being used for math it will not use the array and it will be wasted
 		this.values = new Float32Array([x, y, z]);
 	}
+
+	public setX(x: number): vec3 { return new vec3(x, this.y, this.z); }
+	public setY(y: number): vec3 { return new vec3(this.x, y, this.z); }
+	public setZ(z: number): vec3 { return new vec3(this.x, this.y, z); }
 
 	/**
 	 * Create a new vector with the same values as this vector

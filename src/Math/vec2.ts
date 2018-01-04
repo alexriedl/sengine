@@ -21,6 +21,9 @@ export default class vec2 {
 		this.values = new Float32Array([x, y]);
 	}
 
+	public setX(x: number): vec2 { return new vec2(x, this.y); }
+	public setY(y: number): vec2 { return new vec2(this.x, y); }
+
 	public toVec3(z: number = 0) {
 		return new vec3(this.x, this.y, z);
 	}

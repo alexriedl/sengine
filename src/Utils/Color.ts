@@ -11,6 +11,7 @@ export default class Color extends vec4 {
 	public static GREEN = new Color(0, 1, 0);
 	public static BLUE = new Color(0, 0, 1);
 	public static YELLOW = new Color(1, 1, 0);
+	public static TRANSPARENT = new Color(0, 0, 0, 0);
 
 	/**
 	 * Create a new color a percentage lighter than this color.

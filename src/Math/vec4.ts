@@ -31,6 +31,11 @@ export default class vec4 {
 		this.values = new Float32Array([x, y, z, w]);
 	}
 
+	public setX(x: number): vec4 { return new vec4(x, this.y, this.z, this.w); }
+	public setY(y: number): vec4 { return new vec4(this.x, y, this.z, this.w); }
+	public setZ(z: number): vec4 { return new vec4(this.x, this.y, z, this.w); }
+	public setW(w: number): vec4 { return new vec4(this.x, this.y, this.z, w); }
+
 	/**
 	 * Create a new vector with the same values as this vector
 	 */
