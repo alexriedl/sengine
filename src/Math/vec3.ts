@@ -2,17 +2,19 @@ import { mod } from './scalar';
 
 // tslint:disable-next-line:class-name
 export default class vec3 {
-	private readonly values: Float32Array;
+	private float32Array?: Float32Array;
+	private float64Array?: Float64Array;
 
-	public get x(): number { return this.values[0]; }
-	public get y(): number { return this.values[1]; }
-	public get z(): number { return this.values[2]; }
+	public readonly x: number;
+	public readonly y: number;
+	public readonly z: number;
+
 	public get xy(): number[] { return [this.x, this.y]; }
 	public get yz(): number[] { return [this.y, this.z]; }
 	public get xyz(): number[] { return [this.x, this.y, this.z]; }
-	public get r(): number { return this.values[0]; }
-	public get g(): number { return this.values[1]; }
-	public get b(): number { return this.values[2]; }
+	public get r(): number { return this.x; }
+	public get g(): number { return this.y; }
+	public get b(): number { return this.z; }
 	public get rgb(): number[] { return [this.r, this.g, this.b]; }
 
 	public len = this.length;
@@ -24,8 +26,9 @@ export default class vec3 {
 	public sqrLen = this.squaredLength;
 
 	public constructor(x: number = 0, y: number = 0, z: number = 0) {
-		// TODO: Dont new up an array right away. if the vector ends up only being used for math it will not use the array and it will be wasted
-		this.values = new Float32Array([x, y, z]);
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	public setX(x: number): vec3 { return new vec3(x, this.y, this.z); }
@@ -238,14 +241,16 @@ export default class vec3 {
 	 * Returns a Float32Array with the components from this vector
 	 */
 	public toFloat32Array(): Float32Array {
-		return this.values;
+		if (!this.float32Array) this.float32Array = new Float32Array([this.x, this.y, this.z]);
+		return this.float32Array;
 	}
 
 	/**
 	 * Returns a Float64Array with the components from this vector
 	 */
 	public toFloat64Array(): Float64Array {
-		return new Float64Array(this.values);
+		if (!this.float64Array) this.float64Array = new Float64Array([this.x, this.y, this.z]);
+		return this.float64Array;
 	}
 
 	/**

@@ -2,20 +2,22 @@ import { mod } from './scalar';
 
 // tslint:disable-next-line:class-name
 export default class vec4 {
-	private readonly values: Float32Array;
+	private float32Array?: Float32Array;
+	private float64Array?: Float64Array;
 
-	public get x(): number { return this.values[0]; }
-	public get y(): number { return this.values[1]; }
-	public get z(): number { return this.values[2]; }
-	public get w(): number { return this.values[3]; }
+	public readonly x: number;
+	public readonly y: number;
+	public readonly z: number;
+	public readonly w: number;
+
 	public get xy(): number[] { return [this.x, this.y]; }
 	public get yz(): number[] { return [this.y, this.z]; }
 	public get xyz(): number[] { return [this.x, this.y, this.z]; }
 	public get xyzw(): number[] { return [this.x, this.y, this.z, this.w]; }
-	public get r(): number { return this.values[0]; }
-	public get g(): number { return this.values[1]; }
-	public get b(): number { return this.values[2]; }
-	public get a(): number { return this.values[3]; }
+	public get r(): number { return this.x; }
+	public get g(): number { return this.y; }
+	public get b(): number { return this.z; }
+	public get a(): number { return this.w; }
 	public get rgb(): number[] { return [this.r, this.g, this.b]; }
 	public get rgba(): number[] { return [this.r, this.g, this.b, this.a]; }
 
@@ -28,7 +30,10 @@ export default class vec4 {
 	public sqrLen = this.squaredLength;
 
 	public constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
-		this.values = new Float32Array([x, y, z, w]);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
 	}
 
 	public setX(x: number): vec4 { return new vec4(x, this.y, this.z, this.w); }
@@ -240,14 +245,16 @@ export default class vec4 {
 	 * Returns a Float32Array with the components from this vector
 	 */
 	public toFloat32Array(): Float32Array {
-		return this.values;
+		if (!this.float32Array) this.float32Array = new Float32Array([this.x, this.y, this.z, this.w]);
+		return this.float32Array;
 	}
 
 	/**
 	 * Returns a Float64Array with the components from this vector
 	 */
 	public toFloat64Array(): Float64Array {
-		return new Float64Array(this.values);
+		if (!this.float64Array) this.float64Array = new Float64Array([this.x, this.y, this.z, this.w]);
+		return this.float64Array;
 	}
 
 	/**

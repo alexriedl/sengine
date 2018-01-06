@@ -3,10 +3,12 @@ import vec3 from './vec3';
 
 // tslint:disable-next-line:class-name
 export default class vec2 {
-	private readonly values: Float32Array;
+	private float32Array?: Float32Array;
+	private float64Array?: Float64Array;
 
-	public get x(): number { return this.values[0]; }
-	public get y(): number { return this.values[1]; }
+	public readonly x: number;
+	public readonly y: number;
+
 	public get xy(): number[] { return [this.x, this.y]; }
 
 	public len = this.length;
@@ -18,7 +20,8 @@ export default class vec2 {
 	public sqrLen = this.squaredLength;
 
 	public constructor(x: number = 0, y: number = 0) {
-		this.values = new Float32Array([x, y]);
+		this.x = x;
+		this.y = y;
 	}
 
 	public setX(x: number): vec2 { return new vec2(x, this.y); }
@@ -229,14 +232,16 @@ export default class vec2 {
 	 * Returns a Float32Array with the components from this vector
 	 */
 	public toFloat32Array(): Float32Array {
-		return this.values;
+		if (!this.float32Array) this.float32Array = new Float32Array([this.x, this.y]);
+		return this.float32Array;
 	}
 
 	/**
 	 * Returns a Float64Array with the components from this vector
 	 */
 	public toFloat64Array(): Float64Array {
-		return new Float64Array(this.values);
+		if (!this.float64Array) this.float64Array = new Float64Array([this.x, this.y]);
+		return this.float64Array;
 	}
 
 	/**
