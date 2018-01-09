@@ -81,7 +81,7 @@ class Hud extends Scene {
 		const allStats = Performance.allFrameStats();
 		if (allStats) {
 			const min = 0;
-			const max = 0.1;
+			const max = 0.08;
 
 			const currentIndex = Performance.getFrameStatsIndex();
 			const currentStats = allStats[currentIndex]['2::Scene::update'];

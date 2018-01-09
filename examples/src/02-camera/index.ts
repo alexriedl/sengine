@@ -17,9 +17,9 @@ export default class CameraExample extends Game {
 		this.setScene(scene);
 
 		const shader = new Shader.TextureShader(
+			new Texture(),
 			Buffer.createSquare(10),
 			Buffer.createRectangleUV(),
-			new Texture(),
 		);
 		new Entity().setShader(shader).setParent(scene);
 

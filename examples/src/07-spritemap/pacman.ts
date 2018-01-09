@@ -1,7 +1,9 @@
 import '../../rsc/pacman.png';
 
 // tslint:disable-next-line:no-implicit-dependencies
-import { Buffer, Entity, Shader, vec2, vec3 } from 'sengine';
+import { Entity, mat4, vec2, vec3 } from 'sengine';
+
+import Sprite from './Sprite';
 
 const TOTAL_FRAME_TIME = (100 / 6) * 3;
 const LEFT: number[] = [0, 1, 2, 1];
@@ -12,7 +14,6 @@ const DOWN: number[] = [0, 7, 8, 7];
 export enum Direction { LEFT = 'L', RIGHT = 'R', UP = 'U', DOWN = 'D' }
 
 export default class Pacman extends Entity {
-	private texCoords: Buffer;
 	private spriteFrame: number = 0;
 	private frameTime: number = TOTAL_FRAME_TIME;
 	private direction: number[] = LEFT;
@@ -22,15 +23,15 @@ export default class Pacman extends Entity {
 	private halfBoardWidth: number;
 	private halfBoardHeight: number;
 
-	public constructor(boardWidth: number, boardHeight: number) {
+	private sprite: Sprite;
+	private size: vec2 = new vec2(1, 1);
+
+	public constructor(sprite: Sprite, boardWidth: number, boardHeight: number) {
 		super();
-		this.texCoords = Buffer.createGridUV(new vec2(16, 16), new vec2(16 * 3, 16 * 3), 9);
-		const verts = Buffer.createSquare(1);
-		const shader = new Shader.TextureShader(verts, this.texCoords, 'images/pacman.png');
-		this.setShader(shader);
 		this.setDirection(Direction.LEFT);
 		this.halfBoardWidth = boardWidth / 2;
 		this.halfBoardHeight = boardHeight / 2;
+		this.sprite = sprite;
 	}
 
 	public setDirection(direction: Direction): this {
@@ -54,7 +55,6 @@ export default class Pacman extends Entity {
 
 		// NOTE: Use the current frame during rendering
 		const frameIndex = this.direction[this.spriteFrame];
-		this.texCoords.options.bufferUsages[0].offset = frameIndex * 8 * 4;
 
 		const p = this.position;
 		let x = p.x + this.movementDirection.x * this.speed;
@@ -70,6 +70,12 @@ export default class Pacman extends Entity {
 
 		this.position = new vec3(x, y);
 
+		this.sprite.push(new vec2(x, y), this.size, frameIndex);
+
+		return this;
+	}
+
+	public render(gl: WebGLRenderingContext, viewMatrix: mat4, projectionMatrix: mat4): this {
 		return this;
 	}
 }
