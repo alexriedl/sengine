@@ -52,6 +52,11 @@ export class Buffer {
 		Register.registerGLItem(this);
 	}
 
+	public setBufferNow(gl: WebGLRenderingContext, values: number[], options?: Buffer.IBufferOptions) {
+		this.asyncSetBufferSettings = { values, options };
+		this.initialize(gl);
+	}
+
 	/**
 	 * Updates the values within a buffer. This is the preferred method to update values if the size
 	 * of the buffer does not change. Do not call this function if the buffer's size changes. Offset is in bytes.

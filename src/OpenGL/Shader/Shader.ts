@@ -3,9 +3,9 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { mat4 } from '../../Math';
 import { Register, Types } from '../../Utils';
 
-export abstract class Shader {
+export abstract class Shader<Tmetadata extends Shader.IShaderMetadata> {
 	private static metadata: Types.IStringMap<Shader.IShaderMetadata> = {};
-	protected metadata: Shader.IShaderMetadata;
+	protected metadata: Tmetadata;
 
 	constructor(vertex: string, fragment: string, cacheProgram: boolean = true) {
 		if (cacheProgram) {
@@ -14,10 +14,10 @@ export abstract class Shader {
 				Shader.metadata[hash] = this.createMetadata(vertex, fragment);
 			}
 
-			this.metadata = Shader.metadata[hash];
+			this.metadata = Shader.metadata[hash] as Tmetadata;
 		}
 		else {
-			this.metadata = this.createMetadata(vertex, fragment);
+			this.metadata = this.createMetadata(vertex, fragment) as Tmetadata;
 		}
 	}
 

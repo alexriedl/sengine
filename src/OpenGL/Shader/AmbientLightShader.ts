@@ -39,7 +39,7 @@ void main() {
 	gl_FragColor = u_color * lighting;
 }`;
 
-export interface ISimpleShaderMetadata extends Shader.IShaderMetadata {
+export interface IAmbientLightShaderMetadata extends Shader.IShaderMetadata {
 	attributes: {
 		a_position: number,
 		a_normal: number,
@@ -48,7 +48,11 @@ export interface ISimpleShaderMetadata extends Shader.IShaderMetadata {
 		u_mvp_matrix: WebGLUniformLocation,
 		u_normal_matrix: WebGLUniformLocation,
 		u_color: WebGLUniformLocation,
-		u_directional_light: WebGLUniformLocation,
+		u_directional_light: {
+			ambientIntensity: WebGLUniformLocation,
+			color: WebGLUniformLocation,
+			direction: WebGLUniformLocation,
+		},
 	};
 }
 
@@ -63,7 +67,7 @@ export const DEFAULT_DIRECTIONAL_LIGHT: IDirectionalLight = {
 	direction: new vec3(1, -3, 0).normalize(),
 };
 
-export default class AmbientLightShader extends Shader {
+export default class AmbientLightShader extends Shader<IAmbientLightShaderMetadata> {
 	protected buffer: Buffer;
 	protected color: Color;
 	protected directionalLight: IDirectionalLight;
@@ -91,8 +95,8 @@ export default class AmbientLightShader extends Shader {
 		return this;
 	}
 
-	protected createMetadata(vertex: string, fragment: string): ISimpleShaderMetadata {
-		const metadata = super.createMetadata(vertex, fragment) as ISimpleShaderMetadata;
+	protected createMetadata(vertex: string, fragment: string): IAmbientLightShaderMetadata {
+		const metadata = super.createMetadata(vertex, fragment) as IAmbientLightShaderMetadata;
 		metadata.attributes.a_position = undefined;
 		metadata.attributes.a_normal = undefined;
 		metadata.uniforms.u_color = undefined;

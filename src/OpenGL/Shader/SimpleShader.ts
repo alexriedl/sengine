@@ -27,7 +27,7 @@ export interface ISimpleShaderMetadata extends Shader.IShaderMetadata {
 	};
 }
 
-export default class SimpleShader extends Shader {
+export default class SimpleShader extends Shader<ISimpleShaderMetadata> {
 	protected buffer: Buffer;
 	protected color: Color;
 

@@ -35,12 +35,12 @@ export interface ITextureShaderMetadata extends Shader.IShaderMetadata {
 	};
 }
 
-export default class TextureShader extends Shader {
+export default class TextureShader extends Shader<ITextureShaderMetadata> {
 	protected vertBuffer: Buffer;
 	protected uvBuffer: Buffer;
 	protected texture: Texture;
 
-	public constructor(vertBuffer: Buffer, uvBuffer: Buffer, texture: Texture | string) {
+	public constructor(texture: Texture | string, vertBuffer: Buffer, uvBuffer?: Buffer) {
 		super(vertexShaderSource, fragmentShaderSource);
 		this.vertBuffer = vertBuffer;
 		this.uvBuffer = uvBuffer;
@@ -71,11 +71,21 @@ export default class TextureShader extends Shader {
 	}
 
 	public draw(gl: WebGLRenderingContext, _, mvpMatrix: mat4): void {
+		if (!this.vertBuffer) return;
 		if (!this.bind(gl)) return;
-		if (!this.vertBuffer.bindVertex(gl, this.metadata.attributes.a_position)) return;
-		if (!this.uvBuffer.bindVertex(gl, this.metadata.attributes.a_texcoord)) return;
 		if (!this.texture.bind(gl)) return;
+
+		// TODO: Come up with a cleaner way to pass attributes
+		if (this.uvBuffer) {
+			if (!this.vertBuffer.bindVertex(gl, this.metadata.attributes.a_position)) return;
+			if (!this.uvBuffer.bindVertex(gl, this.metadata.attributes.a_texcoord)) return;
+		}
+		else {
+			const both = [this.metadata.attributes.a_position, this.metadata.attributes.a_texcoord];
+			if (!this.vertBuffer.bindVertex(gl, both)) return;
+		}
+
 		gl.uniformMatrix4fv(this.metadata.uniforms.u_mvp_matrix, false, mvpMatrix.toFloat32Array());
-		gl.drawArrays(WebGLRenderingContext.TRIANGLE_FAN, 0, this.vertBuffer.options.count);
+		gl.drawArrays(this.vertBuffer.options.renderMode, 0, this.vertBuffer.options.count);
 	}
 }
